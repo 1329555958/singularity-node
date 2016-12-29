@@ -23,13 +23,15 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
 UTIL.moveProperties(params, 'resources', ['cpus', 'memoryMb', 'numPorts']);
 console.log(params);
 //var params = {
-//    id: "nodejs",
+//    id: "jenkins",
 //    owners: "1329555958@qq.com",
 //    uris: "hdfs://10.5.16.14:9000/mesos/mesos-2.0.0.jar",
-//    command: "java -jar -Dserver.port=$PORT0 -Dserver.context-path=/nodejs mesos-2.0.0.jar",
-//    healthcheckUri: "/nodejs/hello",
-//    serviceBasePath: "/nodejs",
+//    command: "java -jar -Dserver.port=$PORT0 -Dserver.context-path=/jenkins mesos-2.0.0.jar",
+//    healthcheckUri: "/jenkins/hello",
+//    serviceBasePath: "/jenkins",
 //    loadBalancerGroups: "testGroup"
 //};
 SRequest.createRequest(params);
+
+
 

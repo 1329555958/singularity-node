@@ -22,10 +22,15 @@ function stringify(p) {
  * @param str 包含{}的字符串，根据后面参数的位置替换{}
  */
 exports.formatString = function (str) {
-    for (var i = 1; i < arguments.length; i++) {
-        str = str.replace(placeholder, stringify(arguments[i]));
+    var segments = str.split(placeholder);
+    var message = [];
+    for (var i = 0; i < Math.min(segments.length - 1, arguments.length - 1); i++) {
+        message.push(segments[i]);
+        //arguments第一个是带有占位符的字符串
+        message.push(stringify(arguments[i + 1]));
     }
-    return str;
+    message = message.concat(segments.slice(i));
+    return message.join('');
 };
 
 /**
@@ -55,3 +60,5 @@ exports.moveProperties = function (obj, destProperty, sourceProperties) {
         delete  obj[k];
     });
 };
+
+console.log(exports.formatString("my name={},age={}", "wch", "26", "sss"));

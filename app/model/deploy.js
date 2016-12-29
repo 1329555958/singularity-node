@@ -20,8 +20,8 @@ var UTIL = require('../common/util');
  * 默认发布模型
  * @returns {{requestId: string, id: string, command: string, resources: {numPorts: number}, uris: Array, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: Array, healthcheckProtocol: string}}
  */
-function defaultModel() {
-    return {
+function defaultModel(params) {
+    return _.defaultsDeep({}, params, {
         "requestId": "singularity-test-service",
         "id": '',
         "command": "java -jar singularitytest-1.0-SNAPSHOT.jar server example.yml",
@@ -36,7 +36,7 @@ function defaultModel() {
         serviceBasePath: '',
         loadBalancerGroups: [],
         healthcheckProtocol: 'HTTP'
-    };
+    });
 }
 /**
  * 新建一个发布模型
@@ -51,8 +51,7 @@ function newDeployModel(params) {
     assert(params.healthcheckUri, UTIL.formatString("healthcheckUri是必须的,params={}", params));
     assert(params.serviceBasePath, UTIL.formatString("serviceBasePath是必须的,params={}", params));
     assert(params.loadBalancerGroups, UTIL.formatString("loadBalancerGroups是必须的,params={}", params));
-    var model = defaultModel();
-    _.extend(model, params);
+    var model = defaultModel(params);
     var now = new Date();
     var id = "" + now.getFullYear() + now.getMonth() + now.getDate() + now.getHours() + now.getMinutes() + now.getSeconds();
     model.requestId = model.id;
