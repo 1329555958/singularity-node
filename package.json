@@ -4,6 +4,7 @@
   "author": "weichunhe",
   "private": false,
   "scripts": {
+    "prestart": "npm install",
     "start": "node ./bin/server.js",
     "grunt": "grunt"
   },
