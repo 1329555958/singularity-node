@@ -1,0 +1,20 @@
+{
+  "name": "singularity",
+  "version": "0.0.1",
+  "author": "weichunhe",
+  "private": false,
+  "scripts": {
+    "start": "node ./bin/server.js",
+    "grunt": "grunt"
+  },
+  "repository": {
+    "type": "svn",
+    "url": "http://weichunhe:1555@svn.vfinance.cn/svn/fujie/src/pmd/inf/apm/finlog/dist/finlog.zip"
+  },
+  "dependencies": {
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {}
+}
