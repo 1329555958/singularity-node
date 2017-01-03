@@ -75,9 +75,53 @@ function createDeploy(params) {
     }, function (err, resp, body) {
         assert(!err, UTIL.formatString("创建发布时出现异常,err={},params={}", err, model));
         assert(resp.statusCode >= 200 && resp.statusCode <= 299, UTIL.formatString("未成功创建发布,{},参数={}", body, model));
-        //发布成功成功
-        console.log(UTIL.formatString("发布成功,参数={},结果={}", model, body));
+        console.log("发布中...");
+        waitForDeployResult(model.deploy.requestId, model.deploy.id);
     });
+}
+/**
+ * 查询发布结果
+ * @param requestId {string} 请求编号
+ * @param deployId {string} 发布编号
+ */
+function waitForDeployResult(requestId, deployId) {
+    //先去查询请求信息
+    setTimeout(function () {
+        $.get(CONFIG.singularityUrl + '/api/requests/request/' + requestId, function (err, resp, body) {
+            var body = JSON.parse(body);
+            if (body) {
+                var id = '';
+                if (body.requestDeployState.activeDeploy) {
+                    id = body.requestDeployState.activeDeploy.deployId;
+                    if (id == deployId) {
+                        //发布成功成功
+                        console.log(UTIL.formatString("发布成功,requestId={},deployId={}", requestId, deployId));
+                    }
+                } else if (body.requestDeployState.pendingDeploy) {
+                    id = body.requestDeployState.pendingDeploy.deployId;
+                    //还在发布，重新查询
+                    if (id == deployId) {
+                        waitForDeployResult(requestId, deployId);
+                    }
+                } else { //发布失败，去查询发布历史
+                    //查询对应的具体的发布编号
+                    $.get(CONFIG.singularityUrl + '/api/history/request/' + requestId + '/tasks?requestId=' + requestId + '&deployId=' + deployId + '&count=1&page=1', function (err, resp, body) {
+                        var body = JSON.parse(body);
+                        //发布失败
+                        console.log(body[0]);
+                        assert(deployId == body[0].taskId.deployId, "发布失败,原因未知!");
+                        //获取发布详情
+                        var taskId = body[0].taskId.id;
+                        $.get(CONFIG.singularityUrl + '/api/history/task/' + taskId, function (err, resp, body) {
+                            var body = JSON.parse(body);
+                            var result = body.taskUpdates[body.taskUpdates.length - 1];
+                            assert(0, UTIL.formatString("发布结果,状态={},原因={}", result.taskState, result.statusMessage));
+                        });
+                    });
+                }
+            }
+        });
+    }, 1000);
 }
 
 exports.createDeploy = createDeploy;

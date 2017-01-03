@@ -34,6 +34,7 @@ function defaultModel() {
             "TASK_LOST": ["OWNERS", "ADMINS"],
             "TASK_KILLED": ["OWNERS", "ADMINS"],
             "TASK_FAILED": ["OWNERS", "ADMINS"],
+            "TASK_FAILED_DECOMISSIONED": ["OWNERS", "ADMINS"],
             "TASK_KILLED_UNHEALTHY": ["OWNERS", "ADMINS"]
         }
     };
@@ -58,6 +59,8 @@ function newRequestModel(params) {
  */
 function createRequest(params) {
     var model = newRequestModel(_.pick(params, 'id', 'owners', 'instances'));
+    //先删除，后重新发布
+    //$.delete(CONFIG.singularityUrl + '/api/requests/request/' + model.id, {json: {message: "redeploy"}}, function (err, resp, body) {
     $.post(CONFIG.singularityUrl + '/api/requests', {
         json: model
     }, function (err, resp, body) {
@@ -67,6 +70,8 @@ function createRequest(params) {
         console.log(UTIL.formatString("创建请求成功,准备发布！参数={},结果={}", model, body));
         DEPLOY.createDeploy(params);
     });
+    //});
+
 }
 
 
