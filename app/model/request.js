@@ -57,12 +57,14 @@ function newRequestModel(params) {
  * @param params {{id:string,owners:string,instances:number,command: string, resources: {numPorts: number}, uris: String, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: String}}
  */
 function createRequest(params) {
+    var model = newRequestModel(_.pick(params, 'id', 'owners', 'instances'));
     $.post(CONFIG.singularityUrl + '/api/requests', {
-        json: newRequestModel(_.pick(params, 'id', 'owners', 'instances'))
+        json: model
     }, function (err, resp, body) {
-        assert(!err, UTIL.formatString("创建请求时出现异常,params={},err={}", params, err));
+        assert(!err, UTIL.formatString("创建请求时出现异常,err={},params={}", err, model));
+        assert(resp.statusCode >= 200 && resp.statusCode <= 299, UTIL.formatString("未成功创建请求,{},参数={}", body, model));
         //创建请求成功，进行添加发布
-        console.log(UTIL.formatString("创建请求成功,准备发布！参数={},结果={}", params, body));
+        console.log(UTIL.formatString("创建请求成功,准备发布！参数={},结果={}", model, body));
         DEPLOY.createDeploy(params);
     });
 }

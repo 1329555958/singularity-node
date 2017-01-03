@@ -53,7 +53,7 @@ function newDeployModel(params) {
     assert(params.loadBalancerGroups, UTIL.formatString("loadBalancerGroups是必须的,params={}", params));
     var model = defaultModel(params);
     var now = new Date();
-    var id = "" + now.getFullYear() + now.getMonth() + now.getDate() + now.getHours() + now.getMinutes() + now.getSeconds();
+    var id = UTIL.dateUtil.format(now);
     model.requestId = model.id;
     model.id = id;
     if (!_.isArray(model.uris)) {
@@ -69,12 +69,14 @@ function newDeployModel(params) {
  * @param params {{id,owners,instances}|{id:string,owners:string[],instances:number,command: string, resources: {numPorts: number}, uris: String, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: String}}
  */
 function createDeploy(params) {
+    var model = newDeployModel(params);
     $.post(CONFIG.singularityUrl + '/api/deploys', {
-        json: newDeployModel(params)
+        json: model
     }, function (err, resp, body) {
-        assert(!err, UTIL.formatString("创建发布时出现异常,params={},err={}", params, err));
+        assert(!err, UTIL.formatString("创建发布时出现异常,err={},params={}", err, model));
+        assert(resp.statusCode >= 200 && resp.statusCode <= 299, UTIL.formatString("未成功创建发布,{},参数={}", body, model));
         //发布成功成功
-        console.log(UTIL.formatString("发布成功,参数={},结果={}", params, body));
+        console.log(UTIL.formatString("发布成功,参数={},结果={}", model, body));
     });
 }
 

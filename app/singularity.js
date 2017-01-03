@@ -1,3 +1,4 @@
+
 /**
  *
  * 作者：weich
@@ -13,7 +14,7 @@
  */
 
 var http = require('http');
-var UTIL = require('./common/util');
+var UTIL =  require('./common/util');
 var SRequest = require('./model/request');
 
 
@@ -23,15 +24,16 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
 UTIL.moveProperties(params, 'resources', ['cpus', 'memoryMb', 'numPorts']);
 console.log(params);
 //var params = {
-//    id: "jenkins",
+//    id: "jenkins22",
 //    owners: "1329555958@qq.com",
 //    uris: "hdfs://10.5.16.14:9000/mesos/mesos-2.0.0.jar",
-//    command: "java -jar -Dserver.port=$PORT0 -Dserver.context-path=/jenkins mesos-2.0.0.jar",
-//    healthcheckUri: "/jenkins/hello",
-//    serviceBasePath: "/jenkins",
+//    command: "java -jar -Dserver.port=$PORT0 -Dserver.context-path=/jenkins22 mesos-2.0.0.jar",
+//    healthcheckUri: "/jenkins22/hello",
+//    serviceBasePath: "/jenkins22",
 //    loadBalancerGroups: "testGroup"
 //};
 SRequest.createRequest(params);
 
 
 
+//id=jenkins22 owners='1329555958@qq.com' command="java  -jar -Dserver.port=\$PORT0 -Dserver.context-path=/jenkins22 mesos-2.0.0.jar" uris='hdfs://10.5.16.14:9000/mesos/mesos-2.0.0.jar' healthcheckUri='/jenkins22/hello' serviceBasePath='/jenkins22' loadBalancerGroups='testGroup'
