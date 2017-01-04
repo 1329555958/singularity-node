@@ -26,7 +26,7 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
  app  必须;例如cas-web;应用名称
  envInfo 可选;例如func111;环境信息
  id   可选;例如cas-web;全局唯一标识，如果不指定，默认会使用{envInfo}.{app}的组合
- buildId 可选;例如1,m用来标识发布;Jenkins可以使用${BUILD_ID},不指定时默认使用YYYYMMDDHHmmss
+ buildId 可选;例如1,m用来标识发布;Jenkins可以使用${BUILD_ID},不指定时默认使用hh.mm.ss格式化当前日期
  owners 可选;例如weichunhe@netfinworks.com;拥有者的邮箱，多个之间用逗号分隔，用于部署伸缩或者被kill时发送邮件进行提醒
  instances 可选;默认1;需要部署的实例个数
  numPorts 可选;默认1; 每个实例需要使用的端口个数

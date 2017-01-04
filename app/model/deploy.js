@@ -53,7 +53,7 @@ function newDeployModel(params) {
     assert(params.loadBalancerGroups, UTIL.formatString("loadBalancerGroups是必须的,params={}", params));
     var model = defaultModel(params);
     var now = new Date();
-    var id = params.buildId || UTIL.dateUtil.format(now);
+    var id = params.buildId || UTIL.dateUtil.format(now, 'hh.mm.ss');
     model.requestId = model.id;
     model.id = id;
     if (!_.isArray(model.uris)) {
