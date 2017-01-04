@@ -23,8 +23,10 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
 
 //id=test.${JOB_NAME} owners=1329555958@qq.com instances=1 command="java  -jar -Dserver.port=\$PORT0 -Dserver.context-path=/${JOB_NAME} mesos.jar" uris=hdfs://10.5.16.14:9000/mesos/mesos.jar healthcheckUri=/${JOB_NAME}/hello serviceBasePath=/${JOB_NAME} loadBalancerGroups=testGroup
 /*
- app  必须；例如cas-web;应用名称
+ app  必须;例如cas-web;应用名称
+ envInfo 可选;例如func111;环境信息
  id   可选;例如cas-web;全局唯一标识，如果不指定，默认会使用{envInfo}.{app}的组合
+ buildId 可选;例如1,m用来标识发布;Jenkins可以使用${BUILD_ID},不指定时默认使用YYYYMMDDHHmmss
  owners 可选;例如weichunhe@netfinworks.com;拥有者的邮箱，多个之间用逗号分隔，用于部署伸缩或者被kill时发送邮件进行提醒
  instances 可选;默认1;需要部署的实例个数
  numPorts 可选;默认1; 每个实例需要使用的端口个数
@@ -38,8 +40,11 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
 
 //对参数进行处理
 //envInfo.app 组合成id
-if (!params.id && params.envInfo && params.app) {
-    params.id = params.envInfo + "." + params.app;
+if (!params.id && params.app) {
+    params.id = params.app;
+    if (params.envInfo) {
+        params.id = params.envInfo + "." + params.id;
+    }
 }
 //healthcheckUri
 if (!params.healthcheckUri) {
