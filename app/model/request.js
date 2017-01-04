@@ -68,7 +68,24 @@ function createRequest(params) {
         assert(resp.statusCode >= 200 && resp.statusCode <= 299, UTIL.formatString("未成功创建请求,{},参数={}", body, model));
         //创建请求成功，进行添加发布
         console.log(UTIL.formatString("创建请求成功,准备发布！参数={},结果={}", model, body));
-        DEPLOY.createDeploy(params);
+        if (body.pendingDeployState) {
+            var data = body.pendingDeployState.deployMarker;
+            console.log(UTIL.formatString("取消发布,{}", data));
+            //先取消pending再发布
+            $.delete(CONFIG.singularityUrl + "/api/deploys/deploy/" + data.deployId + "/request/" + data.requestId, {
+                json: {
+                    requestId: data.requestId,
+                    deployId: data.deployId
+                }
+            }, function (err, resp, body) {
+                setTimeout(function () {
+                    DEPLOY.createDeploy(params);
+                }, 2000);
+            });
+        } else {
+            DEPLOY.createDeploy(params);
+        }
+        //DEPLOY.createDeploy(params);
     });
     //});
 

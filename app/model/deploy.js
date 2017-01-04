@@ -69,15 +69,17 @@ function newDeployModel(params) {
  * @param params {{id,owners,instances}|{id:string,owners:string[],instances:number,command: string, resources: {numPorts: number}, uris: String, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: String}}
  */
 function createDeploy(params) {
-    var model = newDeployModel(params);
-    $.post(CONFIG.singularityUrl + '/api/deploys', {
-        json: model
-    }, function (err, resp, body) {
-        assert(!err, UTIL.formatString("创建发布时出现异常,err={},params={}", err, model));
-        assert(resp.statusCode >= 200 && resp.statusCode <= 299, UTIL.formatString("未成功创建发布,{},参数={}", body, model));
-        console.log("发布中...");
-        waitForDeployResult(model.deploy.requestId, model.deploy.id);
-    });
+    setTimeout(function () {
+        var model = newDeployModel(params);
+        $.post(CONFIG.singularityUrl + '/api/deploys', {
+            json: model
+        }, function (err, resp, body) {
+            assert(!err, UTIL.formatString("创建发布时出现异常,err={},params={}", err, model));
+            assert(resp.statusCode >= 200 && resp.statusCode <= 299, UTIL.formatString("未成功创建发布,{},参数={}", body, model));
+            console.log("发布中...");
+            waitForDeployResult(model.deploy.requestId, model.deploy.id);
+        });
+    }, 1000);
 }
 /**
  * 查询发布结果
@@ -103,31 +105,43 @@ function waitForDeployResult(requestId, deployId) {
                         //发布成功成功
                         console.log(UTIL.formatString("发布成功,requestId={},deployId={}", requestId, deployId));
                     } else {
-                        queryTaskHistory(requestId, deployId);
+                        queryTaskHistory(requestId, deployId, 5);
                     }
                 } else { //发布失败，去查询发布历史
-                    queryTaskHistory(requestId, deployId);
+                    queryTaskHistory(requestId, deployId, 5);
                 }
             }
         });
     }, 1000);
 }
-
-function queryTaskHistory(requestId, deployId) {
+/**
+ * 查询发布历史数据，用来查看发布错误信息
+ * @param requestId
+ * @param deployId
+ * @param loopNum 循环次数，有可能一次查不到数据
+ */
+function queryTaskHistory(requestId, deployId, loopNum) {
     //查询对应的具体的发布编号
-    $.get(CONFIG.singularityUrl + '/api/history/request/' + requestId + '/tasks?requestId=' + requestId + '&deployId=' + deployId + '&count=1&page=1', function (err, resp, body) {
-        var body = JSON.parse(body);
-        //发布失败
-        console.log(body[0]);
-        assert(deployId == body[0].taskId.deployId, "发布失败,原因未知!");
-        //获取发布详情
-        var taskId = body[0].taskId.id;
-        $.get(CONFIG.singularityUrl + '/api/history/task/' + taskId, function (err, resp, body) {
+    setTimeout(function () {
+        $.get(CONFIG.singularityUrl + '/api/history/request/' + requestId + '/tasks?requestId=' + requestId + '&deployId=' + deployId + '&count=1&page=1', function (err, resp, body) {
             var body = JSON.parse(body);
-            var result = body.taskUpdates[body.taskUpdates.length - 1];
-            assert(0, UTIL.formatString("发布结果,请求编号={},发布编号={},任务编号={},状态={},原因={}", requestId, deployId, taskId, result.taskState, result.statusMessage));
+            //发布失败
+            console.log(body[0]);
+            if (!body[0] && loopNum-- > 0) {
+                queryTaskHistory(requestId, deployId, loopNum);
+                console.log("未查询到失败信息,继续查询..." + loopNum);
+                return;
+            }
+            assert(deployId == body[0].taskId.deployId, "发布失败,原因未知!");
+            //获取发布详情
+            var taskId = body[0].taskId.id;
+            $.get(CONFIG.singularityUrl + '/api/history/task/' + taskId, function (err, resp, body) {
+                var body = JSON.parse(body);
+                var result = body.taskUpdates[body.taskUpdates.length - 1];
+                assert(0, UTIL.formatString("发布结果,请求编号={},发布编号={},任务编号={},状态={},原因={}", requestId, deployId, taskId, result.taskState, result.statusMessage));
+            });
         });
-    });
+    }, 2000);
 }
 
 exports.createDeploy = createDeploy;
