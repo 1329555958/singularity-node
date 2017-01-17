@@ -24,7 +24,7 @@ function defaultModel(params) {
     return _.defaultsDeep({}, params, {
         "requestId": "singularity-test-service",
         "id": '',
-        "command": "java -jar singularitytest-1.0-SNAPSHOT.jar server example.yml",
+        "command": "cp $MESOS_SANDBOX/*.war $CATALINA_HOME/webapps && $CATALINA_HOME/bin/catalina.sh run",
         containerInfo: {
             type: "DOCKER",
             docker: {

@@ -30,7 +30,7 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
  owners 可选;例如weichunhe@netfinworks.com;拥有者的邮箱，多个之间用逗号分隔，用于部署伸缩或者被kill时发送邮件进行提醒
  instances 可选;默认1;需要部署的实例个数
  numPorts 可选;默认1; 每个实例需要使用的端口个数
- command 必须;例如"java  -jar -Dserver.port=\$PORT0 -Dserver.context-path=/cas-web mesos.jar";shell命令，如果命令中有空格需要使用双引号。$PORT0表示第一个端口，$需要使用\进行转义
+ command 可选;例如"java  -jar -Dserver.port=\$PORT0 -Dserver.context-path=/cas-web mesos.jar";shell命令，如果命令中有空格需要使用双引号。$PORT0表示第一个端口，$需要使用\进行转义，如果使用非docker容器就必须指定
  uris 必须;例如hdfs://10.5.16.14:9000/mesos/mesos.jar,https://github.com/1329555958/ui/releases/download/1.0/singularity_example.yml; 应用包的地址，可以是http的也可以是hdfs的，多个之间使用逗号分隔
  healthcheckUri 可选;例如/cas-web/healthCheck;健康检查地址，如果不指定时，默认使用/{app}/_health_check
  serviceBasePath 可选;例如/cas-web;负载均衡的前置地址，如果不指定时，默认使用/{app}
