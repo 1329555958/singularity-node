@@ -35,6 +35,7 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
  healthcheckUri 可选;例如/cas-web/healthCheck;健康检查地址，如果不指定时，默认使用/{app}/_health_check
  serviceBasePath 可选;例如/cas-web;负载均衡的前置地址，如果不指定时，默认使用/{app}
  loadBalancerGroups 必须;例如testGroup;负载均衡分组地址，这个需要在安装负载均衡器(baragon agent)时指定的
+ containerType 可选;默认docker；可选(docker、mesos)；使用docker作为容器，mesos使用默认容器
  */
 
 
@@ -70,5 +71,7 @@ console.log(params);
 //};
 SRequest.createRequest(params);
 
+
+//sh /opt/applications/env_scm_tools/scm_tools/tomcat/createTomcatInstance.sh $INSTANCE_NAME $ENV_INFO $INSTANCE_CMD $PORT $GIT_NAME $APP $TOMCAT_VERSION TYPE
 
 //id=jenkins22 owners='1329555958@qq.com' command="java  -jar -Dserver.port=\$PORT0 -Dserver.context-path=/jenkins22 mesos-2.0.0.jar" uris='hdfs://10.5.16.14:9000/mesos/mesos-2.0.0.jar' healthcheckUri='/jenkins22/hello' serviceBasePath='/jenkins22' loadBalancerGroups='testGroup'

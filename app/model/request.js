@@ -28,6 +28,7 @@ function defaultModel() {
         "owners": [],//["weichunheaaaaaaa@netfinworks.com", "1329555958@qq.com"],
         "instances": 1,
         "rackSensitive": true,
+        "rackAffinity":[],
         "loadBalanced": true,
         "slavePlacement": "SEPARATE",
         "emailConfigurationOverrides": {

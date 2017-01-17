@@ -25,9 +25,28 @@ function defaultModel(params) {
         "requestId": "singularity-test-service",
         "id": '',
         "command": "java -jar singularitytest-1.0-SNAPSHOT.jar server example.yml",
+        containerInfo: {
+            type: "DOCKER",
+            docker: {
+                image: "tomcat:8-jre8",
+                privileged: false,
+                network: "BRIDGE",
+                portMappings: [
+                    {
+                        containerPortType: "LIRERAL",
+                        containerPort: 8080,
+                        hostPortType: "FROM_OFFER",
+                        hostPort: 0,
+                        protocol: "tcp"
+                    }
+                ],
+                forcePullImage: false,
+                dockerParameters: []
+            }
+        },
         "resources": {
             "cpus": 0.1,
-            "memoryMb": 128,
+            "memoryMb": 1024,
             "numPorts": 1,
             "diskMb": 0
         },
@@ -61,6 +80,9 @@ function newDeployModel(params) {
     }
     if (!_.isArray(model.loadBalancerGroups)) {
         model.loadBalancerGroups = model.loadBalancerGroups.split(",");
+    }
+    if (model.containerType && model.containerType.toLowerCase() !== 'docker') {
+        delete  model.containerInfo;
     }
     return {"deploy": model};
 }
