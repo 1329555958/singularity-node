@@ -64,12 +64,7 @@ function defaultModel(params) {
  */
 function newDeployModel(params) {
     assert(params, "参数不可为空");
-    assert(params.id, UTIL.formatString("id是必须的,params={}", params));
-    assert(params.uris, UTIL.formatString("uris是必须的,params={}", params));
-    assert(params.command, UTIL.formatString("command是必须的,params={}", params));
-    assert(params.healthcheckUri, UTIL.formatString("healthcheckUri是必须的,params={}", params));
-    assert(params.serviceBasePath, UTIL.formatString("serviceBasePath是必须的,params={}", params));
-    assert(params.loadBalancerGroups, UTIL.formatString("loadBalancerGroups是必须的,params={}", params));
+
     var model = defaultModel(params);
     var now = new Date();
     var id = params.buildId || UTIL.dateUtil.format(now, 'hh.mm.ss');
@@ -84,6 +79,12 @@ function newDeployModel(params) {
     if (model.containerType && model.containerType.toLowerCase() !== 'docker') {
         delete  model.containerInfo;
     }
+    assert(params.id, UTIL.formatString("id是必须的,params={}", params));
+    assert(params.uris, UTIL.formatString("uris是必须的,params={}", params));
+    assert(params.command, UTIL.formatString("command是必须的,params={}", params));
+    assert(params.healthcheckUri, UTIL.formatString("healthcheckUri是必须的,params={}", params));
+    assert(params.serviceBasePath, UTIL.formatString("serviceBasePath是必须的,params={}", params));
+    assert(params.loadBalancerGroups, UTIL.formatString("loadBalancerGroups是必须的,params={}", params));
     return {"deploy": model};
 }
 /**
