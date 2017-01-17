@@ -33,7 +33,7 @@ function defaultModel(params) {
                 network: "BRIDGE",
                 portMappings: [
                     {
-                        containerPortType: "LIRERAL",
+                        containerPortType: "LITERAL",
                         containerPort: 8080,
                         hostPortType: "FROM_OFFER",
                         hostPort: 0,
