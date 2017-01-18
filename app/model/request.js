@@ -28,7 +28,7 @@ function defaultModel() {
         "owners": [],//["weichunheaaaaaaa@netfinworks.com", "1329555958@qq.com"],
         "instances": 1,
         "rackSensitive": true,
-        "rackAffinity":[],
+        "rackAffinity": [],
         "loadBalanced": true,
         "slavePlacement": "SEPARATE",
         "emailConfigurationOverrides": {
@@ -52,6 +52,7 @@ function newRequestModel(params) {
     request.id = params.id;
     params.owners && (request.owners = params.owners.split(","));
     params.instances && (request.instances = params.instances - 0);
+    params.rackAffinity && (params.rackAffinity = rackAffinity.split(","));
     return request;
 }
 /**
