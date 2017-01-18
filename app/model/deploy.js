@@ -29,7 +29,7 @@ function defaultModel(params) {
             type: "DOCKER",
             docker: {
                 image: "tomcat:8-jre8",
-                privileged: false,
+                privileged: true,
                 network: "BRIDGE",
                 portMappings: [
                     {
