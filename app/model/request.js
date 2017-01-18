@@ -52,7 +52,7 @@ function newRequestModel(params) {
     request.id = params.id;
     params.owners && (request.owners = params.owners.split(","));
     params.instances && (request.instances = params.instances - 0);
-    params.rackAffinity && (params.rackAffinity = rackAffinity.split(","));
+    params.rackAffinity && (request.rackAffinity = rackAffinity.split(","));
     return request;
 }
 /**
