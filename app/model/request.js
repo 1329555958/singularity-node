@@ -42,7 +42,7 @@ function defaultModel() {
 }
 /**
  * 新建一个singularity的请求模型
- * @param params {{id,owners,instances}|{id:string,owners:string[],instances:number,command: string, resources: {numPorts: number}, uris: String, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: String}}
+ * @param params {{id,owners,instances}|{id:string,owners:string[],instances:number,command: string, resources: {numPorts: number}, uris: String, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: String,rackAffinity:String}}
  * @returns {{id, requestType, owners, instances, rackSensitive, loadBalanced, slavePlacement, emailConfigurationOverrides}|{id: string, requestType: string, owners: string[], instances: number, rackSensitive: boolean, loadBalanced: boolean, slavePlacement: string, emailConfigurationOverrides: {TASK_LOST: string[], TASK_KILLED: string[], TASK_FAILED: string[], TASK_KILLED_UNHEALTHY: string[]}}}
  */
 function newRequestModel(params) {
@@ -52,7 +52,7 @@ function newRequestModel(params) {
     request.id = params.id;
     params.owners && (request.owners = params.owners.split(","));
     params.instances && (request.instances = params.instances - 0);
-    params.rackAffinity && (request.rackAffinity = rackAffinity.split(","));
+    params.rackAffinity && (request.rackAffinity = params.rackAffinity.split(","));
     return request;
 }
 /**
