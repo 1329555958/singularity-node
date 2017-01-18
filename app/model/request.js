@@ -60,7 +60,7 @@ function newRequestModel(params) {
  * @param params {{id:string,owners:string,instances:number,command: string, resources: {numPorts: number}, uris: String, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: String}}
  */
 function createRequest(params) {
-    var model = newRequestModel(_.pick(params, 'id', 'owners', 'instances'));
+    var model = newRequestModel(params);
     //先删除，后重新发布
     //$.delete(CONFIG.singularityUrl + '/api/requests/request/' + model.id, {json: {message: "redeploy"}}, function (err, resp, body) {
     $.post(CONFIG.singularityUrl + '/api/requests', {
