@@ -24,11 +24,11 @@ function defaultModel(params) {
     return _.defaultsDeep({}, params, {
         "requestId": "singularity-test-service",
         "id": '',
-        "command": "cp /mnt/mesos/sandbox/*.war /usr/local/tomcat/webapps && /usr/local/tomcat/bin/catalina.sh run",
+        "command": "./start.sh",
         containerInfo: {
             type: "DOCKER",
             docker: {
-                image: "tomcat:8-jre8",
+                image: "singularity/tomcat:8",
                 privileged: true,
                 network: "BRIDGE",
                 portMappings: [
@@ -41,8 +41,14 @@ function defaultModel(params) {
                     }
                 ],
                 forcePullImage: false,
-                dockerParameters: []
+                dockerParameters: [
+                    //{key: 'entrypoint', value: "/bin/sh"},
+                    {key: "workdir", value: "/usr/local/tomcat"}
+                ]
             }
+        },
+        env: {
+            SHELL_PATH: "run.sh"
         },
         "resources": {
             "cpus": 0.1,

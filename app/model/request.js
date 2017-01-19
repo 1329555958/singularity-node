@@ -31,6 +31,7 @@ function defaultModel() {
         "rackAffinity": [],
         "loadBalanced": true,
         "slavePlacement": "SEPARATE",
+        skipHealthchecksOnDeploy:false,
         "emailConfigurationOverrides": {
             "TASK_LOST": ["OWNERS", "ADMINS"],
             "TASK_KILLED": ["OWNERS", "ADMINS"],
