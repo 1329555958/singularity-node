@@ -95,18 +95,26 @@ RUN set -e \
 		echo >&2 "$nativeLines"; \
 		exit 1; \
 	fi
+
+# 只移动war包，进行部署
 RUN echo "#! /bin/bash" > start.sh
 RUN echo "cp \$MESOS_SANDBOX/*.war \$CATALINA_HOME/webapps" >> start.sh
 RUN echo "\$CATALINA_HOME/bin/catalina.sh run" >> start.sh
 RUN chmod 777 start.sh
+
+# 执行自定义脚本文件，名称通过$SHELL_PATH指定，默认run.sh
 RUN echo "#! /bin/bash" >> call.sh
 RUN echo "echo shell=\$MESOS_SANDBOX/\$SHELL_PATH" >> call.sh
 RUN echo "chmod 777 \$MESOS_SANDBOX/\$SHELL_PATH" >> call.sh
-RUN echo "echo -------------shell--------------------------" >> call.sh
-RUN echo "cat \$MESOS_SANDBOX/\$SHELL_PATH" >> call.sh
-RUN echo "echo \r\n--------------------------------------------" >> call.sh
 RUN echo "sh \$MESOS_SANDBOX/\$SHELL_PATH" >> call.sh
 RUN chmod 777 call.sh
+
+# 执行run.sh
+RUN echo "#! /bin/bash" >> run.sh
+RUN echo "echo shell=\$MESOS_SANDBOX/run.sh" >> run.sh
+RUN echo "chmod 777 \$MESOS_SANDBOX/run.sh" >> run.sh
+RUN echo "sh \$MESOS_SANDBOX/run.sh" >> run.sh
+RUN chmod 777 run.sh
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
