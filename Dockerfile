@@ -118,3 +118,5 @@ RUN chmod 777 run.sh
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
+
+# docker build -t="singularity/tomcat:8" .

@@ -132,7 +132,7 @@ function waitForDeployResult(requestId, deployId) {
                     id = body.requestDeployState.activeDeploy.deployId;
                     if (id == deployId) {
                         //发布成功成功
-                        console.log(UTIL.formatString("发布成功,requestId={},deployId={}", requestId, deployId));
+                        console.log(UTIL.formatString("发布成功,{}   ;requestId={},deployId={}", CONFIG.singularityUrl + '/request/' + requestId, requestId, deployId));
                     } else {
                         queryTaskHistory(requestId, deployId, 5);
                     }
@@ -167,7 +167,7 @@ function queryTaskHistory(requestId, deployId, loopNum) {
             $.get(CONFIG.singularityUrl + '/api/history/task/' + taskId, function (err, resp, body) {
                 var body = JSON.parse(body);
                 var result = body.taskUpdates[body.taskUpdates.length - 1];
-                assert(0, UTIL.formatString("发布结果,请求编号={},发布编号={},任务编号={},状态={},原因={}", requestId, deployId, taskId, result.taskState, result.statusMessage));
+                console.log(UTIL.formatString("发布结果:详情={}  ,请求编号={},发布编号={},任务编号={},状态={},原因={}", CONFIG.singularityUrl + '/task/' + taskId, requestId, deployId, taskId, result.taskState, result.statusMessage));
             });
         });
     }, 2000);
