@@ -60,21 +60,21 @@ if (!params.serviceBasePath) {
 UTIL.moveProperties(params, 'resources', ['cpus', 'memoryMb', 'numPorts']);
 
 console.log(params);
-var params = {
-    buildId: 'webstorm.' + new Date().getTime(),
-    app: 'optimus',
-    envInfo: 'test',
-    owners: '1329555958@qq.com',
-    command: './call.sh',
-    uris: 'hdfs://10.5.16.14:9000/mesos/var/lib/jenkins/jobs/optimus/workspace/optimus-h5.war,hdfs://10.5.16.14:9000/mesos/var/lib/jenkins/jobs/optimus/workspace/optimus-admin.war,hdfs://10.5.16.14:9000/mesos/run.sh,hdfs://10.5.16.14:9000/mesos/app.properties',
-    healthcheckUri: '/optimus-h5/_health_check',
-    loadBalancerGroups: 'testGroup',
-    rackAffinity: 'DOCKER',
-    id: 'test.optimus',
-    serviceBasePath: '/optimus',
-    skipHealthchecksOnDeploy:true,
-    resources: {}
-};
+//var params = {
+//    buildId: 'webstorm.' + new Date().getTime(),
+//    app: 'optimus',
+//    envInfo: 'test',
+//    owners: '1329555958@qq.com',
+//    command: './call.sh',
+//    uris: 'hdfs://10.5.16.14:9000/mesos/var/lib/jenkins/jobs/optimus/workspace/optimus-h5.war,hdfs://10.5.16.14:9000/mesos/var/lib/jenkins/jobs/optimus/workspace/optimus-admin.war,hdfs://10.5.16.14:9000/mesos/run.sh,hdfs://10.5.16.14:9000/mesos/app.properties',
+//    healthcheckUri: '/optimus-h5/_health_check',
+//    loadBalancerGroups: 'testGroup',
+//    rackAffinity: 'DOCKER',
+//    id: 'test.optimus',
+//    serviceBasePath: '/optimus',
+//    skipHealthchecksOnDeploy:true,
+//    resources: {}
+//};
 SRequest.createRequest(params);
 
 
