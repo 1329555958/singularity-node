@@ -117,6 +117,7 @@ RUN echo "sh \$MESOS_SANDBOX/run.sh" >> run.sh
 RUN chmod 777 run.sh
 
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
+# CMD ["catalina.sh", "run"]
+    ENTRYPOINT ["bash","-c"]
 
 # docker build -t="singularity/tomcat:8" .
