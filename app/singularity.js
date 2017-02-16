@@ -15,13 +15,17 @@
 var http = require('http');
 var UTIL = require('./common/util');
 var SRequest = require('./model/request');
+var config = require('./common/config').config;
+var assert = require('assert');
+var _ = require('lodash');
 
 
 var commandPrams = process.argv.splice(2);
-console.log(commandPrams);
+console.log('command line params:', commandPrams);
 var params = UTIL.commandLineParamsToJSON(commandPrams);
+console.log('command line params--:', params);
 
-//id=test.${JOB_NAME} owners=1329555958@qq.com instances=1 command="java  -jar -Dserver.port=\$PORT0 -Dserver.context-path=/${JOB_NAME} mesos.jar" uris=hdfs://10.5.16.14:9000/mesos/mesos.jar healthcheckUri=/${JOB_NAME}/hello serviceBasePath=/${JOB_NAME} loadBalancerGroups=testGroup
+// "INSTANCE_NAME=ues-ws" "ENV_INFO=func111docker" "CONTEXT_NAME=ues-ws"  "GIT_NAME=fj338_ues-ws"  "INSTANCE_CMD=fj338_ues-ws_func111_build_20161216.1"  【DOMAIN=】
 /*
  app  必须;例如cas-web;应用名称
  envInfo 可选;例如func111;环境信息
@@ -34,50 +38,57 @@ var params = UTIL.commandLineParamsToJSON(commandPrams);
  uris 必须;例如hdfs://10.5.16.14:9000/mesos/mesos.jar,https://github.com/1329555958/ui/releases/download/1.0/singularity_example.yml; 应用包的地址，可以是http的也可以是hdfs的，多个之间使用逗号分隔
  healthcheckUri 可选;例如/cas-web/healthCheck;健康检查地址，如果不指定时，默认使用/{app}/_health_check
  serviceBasePath 可选;例如/cas-web;负载均衡的前置地址，如果不指定时，默认使用/{app}
+ loadBalanced 可选;true or false 默认true ;是否进行负载均衡
  loadBalancerGroups 必须;例如testGroup;负载均衡分组地址，这个需要在安装负载均衡器(baragon agent)时指定的
  containerType 可选;默认docker；可选(docker、mesos)；使用docker作为容器，mesos使用默认容器
+ skipHealthchecksOnDeploy 可选;默认false；部署时是否进行健康检查
  */
 
-
 //对参数进行处理
-//envInfo.app 组合成id
-if (!params.id && params.app) {
-    params.id = params.app;
-    if (params.envInfo) {
-        params.id = params.envInfo + "." + params.id;
-    }
+
+assert(params.INSTANCE_NAME, UTIL.formatString("INSTANCE_NAME是必须的,params={}", params));
+assert(params.ENV_INFO, UTIL.formatString("ENV_INFO是必须的,params={}", params));
+assert(params.CONTEXT_NAME, UTIL.formatString("CONTEXT_NAME是必须的,params={}", params));
+assert(params.GIT_NAME, UTIL.formatString("GIT_NAME是必须的,params={}", params));
+assert(params.INSTANCE_CMD, UTIL.formatString("INSTANCE_CMD是必须的,params={}", params));
+
+
+//docker 环境参数 -e
+var dockerEnv = _.extend({}, params);
+
+params.dockerEnv = dockerEnv;
+
+params.id = params.ENV_INFO + "." + params.INSTANCE_NAME;
+params.buildId = (params.INSTANCE_CMD +'_'+ UTIL.dateUtil.format(new Date(), 'hhmmss')).replace(/-/g, '_');
+
+if (params.LOAD_BALANCED !== undefined) {
+    params.loadBalanced = !!params.LOAD_BALANCED;
 }
+//不提供域名，就不进行负载均衡
+if (!params.DOMAIN) {
+    params.loadBalanced = false;
+} else {
+    params.loadBalancerOptions = {domain: params.DOMAIN};
+}
+
 //healthcheckUri
 if (!params.healthcheckUri) {
-    params.healthcheckUri = "/" + params.app + "/_health_check";
+    params.healthcheckUri = "/" + params.CONTEXT_NAME + "/" + config.healthcheckUri;
 }
 //serviceBasePath
 if (!params.serviceBasePath) {
-    params.serviceBasePath = "/" + params.app;
+    params.serviceBasePath = "/" + params.CONTEXT_NAME;
 }
 
 
+params.command = params.command || config.dockerCMD;
+
+params.loadBalancerGroups = params.loadBalancerGroups || config.loadBalancerGroups;
+
 UTIL.moveProperties(params, 'resources', ['cpus', 'memoryMb', 'numPorts']);
 
-console.log(params);
-//var params = {
-//    buildId: 'webstorm.' + new Date().getTime(),
-//    app: 'optimus',
-//    envInfo: 'test',
-//    owners: '1329555958@qq.com',
-//    command: './call.sh',
-//    uris: 'hdfs://10.5.16.14:9000/mesos/var/lib/jenkins/jobs/optimus/workspace/optimus-h5.war,hdfs://10.5.16.14:9000/mesos/var/lib/jenkins/jobs/optimus/workspace/optimus-admin.war,hdfs://10.5.16.14:9000/mesos/run.sh,hdfs://10.5.16.14:9000/mesos/app.properties',
-//    healthcheckUri: '/optimus-h5/_health_check',
-//    loadBalancerGroups: 'testGroup',
-//    rackAffinity: 'DOCKER',
-//    id: 'test.optimus',
-//    serviceBasePath: '/optimus',
-//    skipHealthchecksOnDeploy:true,
-//    resources: {}
-//};
+console.log('json params:', params);
+
 SRequest.createRequest(params);
 
 
-//sh /opt/applications/env_scm_tools/scm_tools/tomcat/createTomcatInstance.sh $INSTANCE_NAME $ENV_INFO $INSTANCE_CMD $PORT $GIT_NAME $APP $TOMCAT_VERSION TYPE
-
-//id=jenkins22 owners='1329555958@qq.com' command="java  -jar -Dserver.port=\$PORT0 -Dserver.context-path=/jenkins22 mesos-2.0.0.jar" uris='hdfs://10.5.16.14:9000/mesos/mesos-2.0.0.jar' healthcheckUri='/jenkins22/hello' serviceBasePath='/jenkins22' loadBalancerGroups='testGroup'

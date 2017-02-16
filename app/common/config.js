@@ -13,5 +13,11 @@
  */
 
 exports.config = {
-    singularityUrl: 'http://10.5.6.35:7099/singularity'
+    singularityUrl: 'http://10.65.215.34:17099/singularity',
+    healthcheckUri:'_health_check',
+    addHost: 'git.vfinance.cn:10.65.213.16',
+    memoryMb: 1024,
+    loadBalancerGroups:'testGroup',
+    dockerCMD:'/opt/dockerInit.sh',
+    dockerImage:'vftomcat8/tomcat'
 };

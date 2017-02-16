@@ -1,123 +1,55 @@
-FROM openjdk:8-jre
+FROM centos:centos7
+MAINTAINER "Yu Zhifu <yuzhifu@netfinworks.com>"
+# Centos based container with Java8 and Tomcat8
+RUN locale
+RUN localedef -i zh_CN -c -f UTF-8 zh_CN.UTF-8
+RUN echo "export LC_ALL=zh_CN.UTF-8" >> /etc/profile && source /etc/profile
 
-ENV CATALINA_HOME /usr/local/tomcat
-ENV PATH $CATALINA_HOME/bin:$PATH
-RUN mkdir -p "$CATALINA_HOME"
-WORKDIR $CATALINA_HOME
+ENV LANG zh_CN.UTF-8
+ENV LC_CTYPE zh_CN.UTF-8
 
-# let "Tomcat Native" live somewhere isolated
-ENV TOMCAT_NATIVE_LIBDIR $CATALINA_HOME/native-jni-lib
-ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$TOMCAT_NATIVE_LIBDIR
+# Install prepare infrastructure
+RUN yum -y update && \
+        yum -y install wget && \
+        yum -y install zip && \
+        yum -y install unzip && \
+        yum -y install git && \
+        yum -y install lrzsz && \
+        yum -y install tar
 
-# runtime dependencies for Tomcat Native Libraries
-# Tomcat Native 1.2+ requires a newer version of OpenSSL than debian:jessie has available
-# > checking OpenSSL library version >= 1.0.2...
-# > configure: error: Your version of OpenSSL is not compatible with this version of tcnative
-# see http://tomcat.10.x6.nabble.com/VOTE-Release-Apache-Tomcat-8-0-32-tp5046007p5046024.html (and following discussion)
-# and https://github.com/docker-library/tomcat/pull/31
-ENV OPENSSL_VERSION 1.1.0c-2
-RUN { \
-		echo 'deb http://deb.debian.org/debian stretch main'; \
-	} > /etc/apt/sources.list.d/stretch.list \
-	&& { \
-# add a negative "Pin-Priority" so that we never ever get packages from stretch unless we explicitly request them
-		echo 'Package: *'; \
-		echo 'Pin: release n=stretch'; \
-		echo 'Pin-Priority: -10'; \
-		echo; \
-# except OpenSSL, which is the reason we're here
-		echo 'Package: openssl libssl*'; \
-		echo "Pin: version $OPENSSL_VERSION"; \
-		echo 'Pin-Priority: 990'; \
-	} > /etc/apt/preferences.d/stretch-openssl
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		libapr1 \
-		openssl="$OPENSSL_VERSION" \
-	&& rm -rf /var/lib/apt/lists/*
+# Prepare environment
+ENV JAVA_HOME /opt/jdk1.8.0_45
+ENV PATH $PATH:$JAVA_HOME/bin:$CATALINA_HOME/bin:$CATALINA_HOME/scripts
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# see https://www.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/KEYS
-# see also "update.sh" (https://github.com/docker-library/tomcat/blob/master/update.sh)
-ENV GPG_KEYS 05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 61B832AC2F1C5A90F0F9B00A1C506407564C17A3 713DA88BE50911535FE716F5208B0AB1D63011C7 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23
-RUN set -ex; \
-	for key in $GPG_KEYS; do \
-		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done
+# Install Oracle Java8
+#RUN wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" \
+#       http://download.oracle.com/otn-pub/java/jdk/7u71-b14/jdk-7u71-linux-x64.tar.gz && \
+#       tar -xvf jdk-7u71-linux-x64.tar.gz && \
+#       rm jdk*.tar.gz && \
+#       mv jdk* ${JAVA_HOME}
+ADD jdk1.8.0_45 ${JAVA_HOME}
 
-ENV TOMCAT_MAJOR 8
-ENV TOMCAT_VERSION 8.0.39
+# Install Tomcat
+#RUN wget http://apache-mirror.rbc.ru/pub/apache/tomcat/tomcat-8/v8.0.39/bin/apache-tomcat-8.0.39.tar.gz && \
+#       tar -xvf apache-tomcat-8.0.39.tar.gz && \
+#       rm apache-tomcat*.tar.gz && \
+#       mv apache-tomcat* ${CATALINA_HOME}
+ADD tomcat /opt/app/tomcat
+RUN chmod +x ${CATALINA_HOME}/bin/*sh
 
-# https://issues.apache.org/jira/browse/INFRA-8753?focusedCommentId=14735394#comment-14735394
-ENV TOMCAT_TGZ_URL https://www.apache.org/dyn/closer.cgi?action=download&filename=tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
-# not all the mirrors actually carry the .asc files :'(
-ENV TOMCAT_ASC_URL https://www.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz.asc
+ADD dockerInit.sh /opt
+RUN chmod +x /opt/dockerInit.sh
+#ADD etcdctl /opt
+# Create tomcat user
+#RUN groupadd -r tomcat && \
+#       useradd -g tomcat -d ${CATALINA_HOME} -s /sbin/nologin  -c "Tomcat user" tomcat && \
+#       chown -R tomcat:tomcat ${CATALINA_HOME}
 
-RUN set -x \
-	\
-	&& wget -O tomcat.tar.gz "$TOMCAT_TGZ_URL" \
-	&& wget -O tomcat.tar.gz.asc "$TOMCAT_ASC_URL" \
-	&& gpg --batch --verify tomcat.tar.gz.asc tomcat.tar.gz \
-	&& tar -xvf tomcat.tar.gz --strip-components=1 \
-	&& rm bin/*.bat \
-	&& rm tomcat.tar.gz* \
-	\
-	&& nativeBuildDir="$(mktemp -d)" \
-	&& tar -xvf bin/tomcat-native.tar.gz -C "$nativeBuildDir" --strip-components=1 \
-	&& nativeBuildDeps=" \
-		gcc \
-		libapr1-dev \
-		libssl-dev \
-		make \
-		openjdk-${JAVA_VERSION%%[-~bu]*}-jdk=$JAVA_DEBIAN_VERSION \
-	" \
-	&& apt-get update && apt-get install -y --no-install-recommends $nativeBuildDeps && rm -rf /var/lib/apt/lists/* \
-	&& ( \
-		export CATALINA_HOME="$PWD" \
-		&& cd "$nativeBuildDir/native" \
-		&& ./configure \
-			--libdir="$TOMCAT_NATIVE_LIBDIR" \
-			--prefix="$CATALINA_HOME" \
-			--with-apr="$(which apr-1-config)" \
-			--with-java-home="$(docker-java-home)" \
-			--with-ssl=yes \
-		&& make -j$(nproc) \
-		&& make install \
-	) \
-	&& apt-get purge -y --auto-remove $nativeBuildDeps \
-	&& rm -rf "$nativeBuildDir" \
-	&& rm bin/tomcat-native.tar.gz
-
-# verify Tomcat Native is working properly
-RUN set -e \
-	&& nativeLines="$(catalina.sh configtest 2>&1)" \
-	&& nativeLines="$(echo "$nativeLines" | grep 'Apache Tomcat Native')" \
-	&& nativeLines="$(echo "$nativeLines" | sort -u)" \
-	&& if ! echo "$nativeLines" | grep 'INFO: Loaded APR based Apache Tomcat Native library' >&2; then \
-		echo >&2 "$nativeLines"; \
-		exit 1; \
-	fi
-
-# 只移动war包，进行部署
-RUN echo "#! /bin/bash" > start.sh
-RUN echo "cp \$MESOS_SANDBOX/*.war \$CATALINA_HOME/webapps" >> start.sh
-RUN echo "\$CATALINA_HOME/bin/catalina.sh run" >> start.sh
-RUN chmod 777 start.sh
-
-# 执行自定义脚本文件，名称通过$SHELL_PATH指定，默认run.sh
-RUN echo "#! /bin/bash" >> call.sh
-RUN echo "echo shell=\$MESOS_SANDBOX/\$SHELL_PATH" >> call.sh
-RUN echo "chmod 777 \$MESOS_SANDBOX/\$SHELL_PATH" >> call.sh
-RUN echo "sh \$MESOS_SANDBOX/\$SHELL_PATH" >> call.sh
-RUN chmod 777 call.sh
-
-# 执行run.sh
-RUN echo "#! /bin/bash" >> run.sh
-RUN echo "echo shell=\$MESOS_SANDBOX/run.sh" >> run.sh
-RUN echo "chmod 777 \$MESOS_SANDBOX/run.sh" >> run.sh
-RUN echo "sh \$MESOS_SANDBOX/run.sh" >> run.sh
-RUN chmod 777 run.sh
+#RUN git clone git://git.vfinance.cn/docker_tools.git /opt/docker_tools
 
 EXPOSE 8080
-# CMD ["catalina.sh", "run"]
-    ENTRYPOINT ["bash","-c"]
-
-# docker build -t="singularity/tomcat:8" .
+#EXPOSE 8009
+CMD ["/bin/bash","/opt/dockerInit.sh"]
+#CMD ["/opt/app/tomcat/bin/catalina.sh", "run"]

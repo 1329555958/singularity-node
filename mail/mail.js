@@ -25,12 +25,23 @@ http.createServer(function (req, res) {
             req.addListener("data", function (postDataChunk) {
                 postData += postDataChunk;
             });
+            var isJson = req.headers['content-type'].indexOf('application/x-www-form-urlencoded') === -1;
             // 数据接收完毕，执行回调函数
             req.addListener("end", function () {
-                var params = querystring.parse(postData);//GET & POST  //解释表单数据部分{name="zzl",email="zzl@sina.com"}
-                console.log('数据接收完毕:', params);
-                //转发邮件
-                sendMail(JSON.parse(postData));
+                try {
+                    postData = postData.replace(/\\r\\n/g, '<br/>');
+                    var params = querystring.parse(postData);//GET & POST  //解释表单数据部分{name="zzl",email="zzl@sina.com"}
+                    if (isJson) {
+                        params = JSON.parse(postData);
+                    }
+                    console.log('数据接收完毕:', params);
+                    //转发邮件
+
+                    sendMail(params);
+                } catch (e) {
+                    console.log("邮件发送失败:" + e.message)
+                }
+
             });
         } else {
             postData = url.parse(req.url).query;
@@ -81,7 +92,7 @@ function sendMail(data) {
     req.on('error', function (e) {
         console.log("发送失败" + e.message);
     });
-    console.log("发送数据:" + querystring.stringify(data));
+    console.log("发送数据:" + JSON.stringify(data));
     req.write(querystring.stringify(data));
     req.end();
 }

@@ -54,6 +54,7 @@ function newRequestModel(params) {
     params.owners && (request.owners = params.owners.split(","));
     params.instances && (request.instances = params.instances - 0);
     params.rackAffinity && (request.rackAffinity = params.rackAffinity.split(","));
+    params.loadBalanced && (request.loadBalanced = !!params.loadBalanced);
     return request;
 }
 /**

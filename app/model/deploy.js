@@ -28,7 +28,7 @@ function defaultModel(params) {
         containerInfo: {
             type: "DOCKER",
             docker: {
-                image: "singularity/tomcat:8",
+                image: CONFIG.dockerImage,
                 privileged: true,
                 network: "BRIDGE",
                 portMappings: [
@@ -41,18 +41,15 @@ function defaultModel(params) {
                     }
                 ],
                 forcePullImage: false,
-                dockerParameters: [
-                    //{key: 'entrypoint', value: "/bin/sh"},
-                    {key: "workdir", value: "/usr/local/tomcat"}
-                ]
+                parameters: {"add-host":CONFIG.addHost}
             }
         },
         env: {
-            SHELL_PATH: "run.sh"
+            //SHELL_PATH: "run.sh"
         },
         "resources": {
             "cpus": 0.1,
-            "memoryMb": 1024,
+            "memoryMb": CONFIG.memoryMb,
             "numPorts": 1,
             "diskMb": 0
         },
@@ -60,6 +57,9 @@ function defaultModel(params) {
         healthcheckUri: '',
         serviceBasePath: '',
         loadBalancerGroups: [],
+        loadBalancerOptions:{
+
+        },
         healthcheckProtocol: 'HTTP'
     });
 }
@@ -85,12 +85,18 @@ function newDeployModel(params) {
     if (model.containerType && model.containerType.toLowerCase() !== 'docker') {
         delete  model.containerInfo;
     }
+    if (params.dockerEnv) {
+        _.extend(model.env, params.dockerEnv);
+    }
+    if(params.loadBalancerOptions){
+        _.extend(model.loadBalancerOptions,params.loadBalancerOptions);
+    }
     assert(model.id, UTIL.formatString("id是必须的,params={}", params));
     assert(model.uris, UTIL.formatString("uris是必须的,params={}", params));
     assert(model.command, UTIL.formatString("command是必须的,params={}", params));
     assert(model.healthcheckUri, UTIL.formatString("healthcheckUri是必须的,params={}", params));
     assert(model.serviceBasePath, UTIL.formatString("serviceBasePath是必须的,params={}", params));
-    assert(model.loadBalancerGroups, UTIL.formatString("loadBalancerGroups是必须的,params={}", params));
+    //assert(model.loadBalancerGroups, UTIL.formatString("loadBalancerGroups是必须的,params={}", params));
     return {"deploy": model};
 }
 /**

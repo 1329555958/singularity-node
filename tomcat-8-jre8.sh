@@ -1,6 +1,6 @@
 #!/bin/bash
 #移动war包
-mv $MESOS_SANDBOX/*.war $CATALINA_HOME/webapps/
+cp $MESOS_SANDBOX/*.war $CATALINA_HOME/webapps/
 # 启动tomcat
 $CATALINA_HOME/bin/catalina.sh run
 
