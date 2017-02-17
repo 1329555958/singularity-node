@@ -19,11 +19,12 @@ var config = require('./common/config').config;
 var assert = require('assert');
 var _ = require('lodash');
 
-
-var commandPrams = process.argv.splice(2);
-console.log('command line params:', commandPrams);
-var params = UTIL.commandLineParamsToJSON(commandPrams);
-console.log('command line params--:', params);
+function processCmdParam() {
+    var commandPrams = process.argv.splice(2);
+    console.log('command line params:', commandPrams);
+    var params = UTIL.commandLineParamsToJSON(commandPrams);
+    return params;
+}
 
 // "INSTANCE_NAME=ues-ws" "ENV_INFO=func111docker" "CONTEXT_NAME=ues-ws"  "GIT_NAME=fj338_ues-ws"  "INSTANCE_CMD=fj338_ues-ws_func111_build_20161216.1"  【DOMAIN=】
 /*
@@ -43,52 +44,60 @@ console.log('command line params--:', params);
  containerType 可选;默认docker；可选(docker、mesos)；使用docker作为容器，mesos使用默认容器
  skipHealthchecksOnDeploy 可选;默认false；部署时是否进行健康检查
  */
-
+function singularity(params) {
 //对参数进行处理
 
-assert(params.INSTANCE_NAME, UTIL.formatString("INSTANCE_NAME是必须的,params={}", params));
-assert(params.ENV_INFO, UTIL.formatString("ENV_INFO是必须的,params={}", params));
-assert(params.CONTEXT_NAME, UTIL.formatString("CONTEXT_NAME是必须的,params={}", params));
-assert(params.GIT_NAME, UTIL.formatString("GIT_NAME是必须的,params={}", params));
-assert(params.INSTANCE_CMD, UTIL.formatString("INSTANCE_CMD是必须的,params={}", params));
+    assert(params.INSTANCE_NAME, UTIL.formatString("INSTANCE_NAME是必须的,params={}", params));
+    assert(params.ENV_INFO, UTIL.formatString("ENV_INFO是必须的,params={}", params));
+    assert(params.CONTEXT_NAME, UTIL.formatString("CONTEXT_NAME是必须的,params={}", params));
+    assert(params.GIT_NAME, UTIL.formatString("GIT_NAME是必须的,params={}", params));
+    assert(params.INSTANCE_CMD, UTIL.formatString("INSTANCE_CMD是必须的,params={}", params));
 
 
 //docker 环境参数 -e
-var dockerEnv = _.extend({}, params);
+    var dockerEnv = _.extend({}, params);
 
-params.dockerEnv = dockerEnv;
+    params.dockerEnv = dockerEnv;
 
-params.id = params.ENV_INFO + "." + params.INSTANCE_NAME;
-params.buildId = (params.INSTANCE_CMD +'_'+ UTIL.dateUtil.format(new Date(), 'hhmmss')).replace(/-/g, '_');
+    params.id = params.ENV_INFO + "." + params.INSTANCE_NAME;
+    params.buildId = (params.INSTANCE_CMD + '_' + UTIL.dateUtil.format(new Date(), 'hhmmss')).replace(/-/g, '_');
 
-if (params.LOAD_BALANCED !== undefined) {
-    params.loadBalanced = !!params.LOAD_BALANCED;
-}
+    if (params.LOAD_BALANCED !== undefined) {
+        params.loadBalanced = !!params.LOAD_BALANCED;
+    }
 //不提供域名，就不进行负载均衡
-if (!params.DOMAIN) {
-    params.loadBalanced = false;
-} else {
-    params.loadBalancerOptions = {domain: params.DOMAIN};
-}
+    if (!params.DOMAIN) {
+        params.loadBalanced = false;
+    } else {
+        params.loadBalancerOptions = {domain: params.DOMAIN};
+    }
 
 //healthcheckUri
-if (!params.healthcheckUri) {
-    params.healthcheckUri = "/" + params.CONTEXT_NAME + "/" + config.healthcheckUri;
-}
+    if (!params.healthcheckUri) {
+        params.healthcheckUri = "/" + params.CONTEXT_NAME + "/" + config.healthcheckUri;
+    }
 //serviceBasePath
-if (!params.serviceBasePath) {
-    params.serviceBasePath = "/" + params.CONTEXT_NAME;
+    if (!params.serviceBasePath) {
+        params.serviceBasePath = "/" + params.CONTEXT_NAME;
+    }
+
+
+    params.command = params.command || config.dockerCMD;
+
+    params.loadBalancerGroups = params.loadBalancerGroups || config.loadBalancerGroups;
+
+    UTIL.moveProperties(params, 'resources', ['cpus', 'memoryMb', 'numPorts']);
+
+    console.log('json params:', params);
+
+    SRequest.createRequest(params);
 }
 
+exports.singularity = singularity;
+exports.processCmdParam = processCmdParam;
 
-params.command = params.command || config.dockerCMD;
-
-params.loadBalancerGroups = params.loadBalancerGroups || config.loadBalancerGroups;
-
-UTIL.moveProperties(params, 'resources', ['cpus', 'memoryMb', 'numPorts']);
-
-console.log('json params:', params);
-
-SRequest.createRequest(params);
-
+if (require.main === module) {
+    var params = processCmdParam();
+    singularity(params);
+}
 
