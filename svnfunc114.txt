@@ -21,7 +21,7 @@ func114:tss:tss:fj343_tradeservice:fj343_tradeservice_func111_build_20170111.1:f
 func114:cmf:cmf:fj344_cmf:fj344_cmf_func111_build_20170122.1:func114intra.vfinance.cn
 func114:cmf-task:cmf-task:fj345_cmf-task:fj344_cmf_func111_build_20170122.1
 func114:fcw:fcw:fj346_fcw:fj346_fcw_func111_build_20161216.1:func114fcw.vfinance.cn
-#func114:payment-task:payment-task:fj348_payment-task:fj341_payment_func111_build_20161216.1
+func114:payment-task:payment-task:fj348_payment-task:fj341_payment_func111_build_20161216.1
 func114:cashier:cashier:fj351_cashier:fj351_cashier_func111_build_20161220.1:func114.vfinance.cn
 func114:cashier-api:cashier-api:fj352_cashier-api:fj351_cashier_func111_build_20161220.1:func114intra.vfinance.cn
 func114:static:static:fj353_static:fj353_static_func111_build_20161216.1:func114.vfinance.cn
