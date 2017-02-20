@@ -18,6 +18,10 @@ var fs = require('fs');
 
 var SPLIT_CHART = ":";
 
+process.on('uncaughtException', function (err) {
+    console.log(err);
+});
+
 var param = singularity.processCmdParam();
 assert(param.file, "请指定配置文件绝对路径!");
 
