@@ -57,7 +57,7 @@ function singularity(params) {
 //docker 环境参数 -e
     var dockerEnv = _.extend({}, params);
 
-    dockerEnv.BEFORE_CMD = "echo 10.65.215.31 vfintra1.hdfs.cn >> /etc/hosts";
+    dockerEnv.BEFORE_CMD = "eval echo 10.65.215.31 vfintra1.hdfs.cn >> /etc/hosts";
 
     params.dockerEnv = dockerEnv;
 
