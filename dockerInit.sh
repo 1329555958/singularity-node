@@ -3,7 +3,7 @@
 git clone git://git.vfinance.cn/docker_tools.git /opt/applications/docker_tools
 
 echo before_cmd=$BEFORE_CMD
-$BEFORE_CMD
+/bin/bash -c "$BEFORE_CMD"
 
 export STICKY=${STICKY:-false}
 
