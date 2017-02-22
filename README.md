@@ -37,6 +37,7 @@ npm install
 
 # 注意事项
 ## 添加域名解析
+```
   10.65.213.16 git.vfinance.cn
 
   10.65.215.12 func114admin.vfinance.cn func114fcw.vfinance.cn func114intra.vfinance.cn func114.vfinance.cn
@@ -45,6 +46,7 @@ npm install
   10.65.215.33 vfintra3.hdfs.cn 
   10.65.215.32 vfintra2.hdfs.cn
   10.65.215.31 vfintra1.hdfs.cn
+```
 ## 负载均衡地址
   同一个应用在一个nginx中只能部署一次，因为相同的路径在一个只能出现一次，即使是在不同的域名下
 
