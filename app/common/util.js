@@ -40,7 +40,7 @@ exports.formatString = function (str) {
  */
 exports.commandLineParamsToJSON = function (params) {
     var obj = {};
-    params.forEach(function (p) {
+    _.each(params, function (p) {
         var splitIndex = p.indexOf('=');
         if (splitIndex !== -1) {
             obj[p.substring(0, splitIndex)] = p.substring(splitIndex + 1);
@@ -56,7 +56,7 @@ exports.commandLineParamsToJSON = function (params) {
  */
 exports.moveProperties = function (obj, destProperty, sourceProperties) {
     obj[destProperty] = _.pick(obj, sourceProperties);
-    sourceProperties.forEach(function (k) {
+    _.each(sourceProperties, function (k) {
         delete  obj[k];
     });
 };

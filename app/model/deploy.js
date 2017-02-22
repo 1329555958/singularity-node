@@ -41,7 +41,7 @@ function defaultModel(params) {
                     }
                 ],
                 forcePullImage: false,
-                parameters: {"add-host":CONFIG.addHost}
+                parameters: {"add-host":CONFIG.addHost || "localhost:127.0.0.1"}
             }
         },
         env: {

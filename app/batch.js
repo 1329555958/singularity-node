@@ -52,7 +52,7 @@ fs.readFile(param.file, function (err, data) {
     console.log("***********************获取到有效部署***********************************");
     console.log(validItems.length, validItems.join("\r\n"));
     console.log("***********************************************************************");
-    params.forEach(function (param) {
+    _.each(params, function (param) {
         singularity.singularity(param);
     });
 
