@@ -19,6 +19,8 @@ var config = require('./common/config').config;
 var assert = require('assert');
 var _ = require('lodash');
 
+var CONTROL_CMD = ['start', 'stop', 're', 'restart'];
+
 function processCmdParam() {
     var commandPrams = process.argv.splice(2);
     console.log('command line params:', commandPrams);
@@ -68,6 +70,13 @@ function singularity(params) {
     params.dockerEnv = dockerEnv;
 
     params.id = params.ENV_INFO + "." + params.INSTANCE_NAME;
+
+    //请求的控制
+    if (_.contains(CONTROL_CMD, params.INSTANCE_CMD)) {
+        SRequest.controlRequest(params.id, params.INSTANCE_CMD);
+        return;
+    }
+
     params.buildId = (params.INSTANCE_CMD + '_' + UTIL.dateUtil.format(new Date(), 'hhmmss')).replace(/-/g, '_');
 
     if (params.LOAD_BALANCED !== undefined) {

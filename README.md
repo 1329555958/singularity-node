@@ -17,7 +17,7 @@ npm install
 # 发布单个应用
 ## 说明
 ### 必须参数
- INSTANCE_NAME ENV_INFO CONTEXT_NAME GIT_NAME INSTANCE_CMD 
+ INSTANCE_NAME ENV_INFO CONTEXT_NAME GIT_NAME INSTANCE_CMD(支持start/stop/restart)
 ### 可选参数
  DOMAIN ，如果需要url访问，就需要指定域名
  
@@ -47,6 +47,26 @@ npm install
   10.65.215.32 vfintra2.hdfs.cn
   10.65.215.31 vfintra1.hdfs.cn
 ```
+
+域名的配置必须首先存在，参考func114fcw.vfinance.cn.conf
+```
+server {
+    listen 80;
+    server_name func114fcw.vfinance.cn;
+    access_log /var/log/nginx/func114fcw.vfinance.cn_access.log  main;
+    proxy_set_header Host             $host;
+    proxy_set_header X-Real-IP        $remote_addr;
+    proxy_connect_timeout 60;
+    proxy_read_timeout 60;
+    proxy_set_header X-Forwarded-For $http_x_forwarded_for;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    client_max_body_size 20m;
+ 
+ 
+    include /etc/nginx/conf.d/proxy/func114fcw.vfinance.cn/*.conf;
+}
+include /etc/nginx/conf.d/upstreams/func114fcw.vfinance.cn/*.conf;
+```
 ## 负载均衡地址
-  同一个应用在一个nginx中只能部署一次，因为相同的路径在一个只能出现一次，即使是在不同的域名下
+  同一个应用在同一套环境中只能部署一次，因为相同的路径在一个只能出现一次，即使是在不同的域名下
 
