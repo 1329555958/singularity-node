@@ -108,6 +108,7 @@ function createRequest(params) {
  */
 function controlRequest(requestId, cmd) {
     $.get(CONFIG.singularityUrl + '/api/requests/request/' + requestId, function (err, resp, body) {
+        body = JSON.parse(body);
         if (err) {
             console.log(UTIL.formatString("XXXXXXXXXXXXcontrolRequest error:requestId={},cmd={}", requestId, cmd));
             return;
@@ -146,7 +147,11 @@ function pause(requestId, callback) {
     postRequestId(requestId + '/pause', callback);
 }
 function bounce(requestId, callback) {
-    postRequestId(requestId + '/bounce', callback);
+    pause(requestId,function(){
+        setTimeout(function(){
+            unpause(requestId);
+        },10000);
+    });
 }
 
 /**
