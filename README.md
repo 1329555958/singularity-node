@@ -20,14 +20,14 @@ npm install
  INSTANCE_NAME ENV_INFO CONTEXT_NAME GIT_NAME INSTANCE_CMD(支持start/stop/restart)
 ### 可选参数
  DOMAIN ，如果需要url访问，就需要指定域名
- 
+ DOCKER_IMAGE,可选vftomcat8/jdk8:1.0 | vftomcat7/jdk6:1.0 | vftomcat6/jdk6:1.0,默认使用的是vftomcat8/jdk8:1.0
 ## 示例
  `node /home/func114/singularity-node/app/singularity.js "INSTANCE_NAME=cmf-task" "ENV_INFO=func114" "CONTEXT_NAME=cmf-task"  "GIT_NAME=fj345_cmf-task"  "INSTANCE_CMD=fj344_cmf_func111_build_20170122.1" "DOMAIN=func114intra.vfinance.cn"`
  singularity.js请使用绝对路径进行引用
 
 # 批量发布
 ## 说明
- 将需要发布的应用按照"ENV_INFO:INSTANCE_NAME:CONTEXT_NAME:GIT_NAME:INSTANCE_CMD[:DOMAIN]（其中DOMAIN是可以不指定的）"的组合方式写入到一个文件内(例如本目录下的svnfunc114.txt)
+ 将需要发布的应用按照"ENV_INFO:INSTANCE_NAME:CONTEXT_NAME:GIT_NAME:INSTANCE_CMD:[DOMAIN]:[DOCKER_IMAGE]（其中DOMAIN、DOCKER_IMAGE是可以不指定的）"的组合方式写入到一个文件内(例如本目录下的svnfunc114.txt)
  一行一个应用信息 ,使用#或者//开头的为注释内容
 
 ## 示例

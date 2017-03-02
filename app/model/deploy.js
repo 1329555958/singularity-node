@@ -28,7 +28,7 @@ function defaultModel(params) {
         containerInfo: {
             type: "DOCKER",
             docker: {
-                image: CONFIG.dockerImage,
+                image: UTIL.getDockerImageName(CONFIG.dockerRegistryUri, CONFIG.dockerImage),
                 privileged: true,
                 network: "BRIDGE",
                 portMappings: [
@@ -41,7 +41,7 @@ function defaultModel(params) {
                     }
                 ],
                 forcePullImage: false,
-                parameters: {"add-host":CONFIG.addHost || "localhost:127.0.0.1"}
+                parameters: {"add-host": CONFIG.addHost || "localhost:127.0.0.1"}
             }
         },
         env: {
@@ -57,9 +57,7 @@ function defaultModel(params) {
         healthcheckUri: '',
         serviceBasePath: '',
         loadBalancerGroups: [],
-        loadBalancerOptions:{
-
-        },
+        loadBalancerOptions: {},
         healthcheckProtocol: 'HTTP'
     });
 }
@@ -88,8 +86,11 @@ function newDeployModel(params) {
     if (params.dockerEnv) {
         _.extend(model.env, params.dockerEnv);
     }
-    if(params.loadBalancerOptions){
-        _.extend(model.loadBalancerOptions,params.loadBalancerOptions);
+    if (params.loadBalancerOptions) {
+        _.extend(model.loadBalancerOptions, params.loadBalancerOptions);
+    }
+    if (params.dockerImage) {
+        _.set(model, 'containerInfo.docker.image', params.dockerImage);
     }
     assert(model.id, UTIL.formatString("id是必须的,params={}", params));
     assert(model.uris, UTIL.formatString("uris是必须的,params={}", params));

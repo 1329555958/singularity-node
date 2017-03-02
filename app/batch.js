@@ -72,8 +72,11 @@ function transferParam(item) {
         GIT_NAME: arr[3],
         INSTANCE_CMD: arr[4]
     };
-    if (arr[5]) {
+    if (arr[5] !== undefined) {
         param.DOMAIN = arr[5];
+    }
+    if(arr[6]){
+        param.DOCKER_IMAGE = arr[6];
     }
 
     return param;

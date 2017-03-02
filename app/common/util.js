@@ -60,7 +60,19 @@ exports.moveProperties = function (obj, destProperty, sourceProperties) {
         delete  obj[k];
     });
 };
-
+/**
+ * 获取docker的名称，去除多余的/
+ * @param registryUrl
+ * @param tag
+ * @returns {string}
+ */
+exports.getDockerImageName = function (registryUrl, tag) {
+    var name = (registryUrl + '/' + tag).replace(/\/\//g, '/');
+    if (_.startsWith(name, '/')) {
+        return name.substring(1);
+    }
+    return name;
+};
 exports.dateUtil = {
 
     calendar: {
@@ -123,3 +135,4 @@ exports.dateUtil = {
         return str;
     }
 };
+

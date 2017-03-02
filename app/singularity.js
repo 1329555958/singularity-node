@@ -98,6 +98,9 @@ function singularity(params) {
         params.serviceBasePath = "/" + params.CONTEXT_NAME;
     }
 
+    if (params.DOCKER_IMAGE) {
+        params.dockerImage = UTIL.getDockerImageName(config.dockerRegistryUri, params.DOCKER_IMAGE);
+    }
 
     params.command = params.command || config.dockerCMD;
 
