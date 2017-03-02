@@ -37,7 +37,7 @@ ADD jdk1.8.0_45 ${JAVA_HOME}
 #       rm apache-tomcat*.tar.gz && \
 #       mv apache-tomcat* ${CATALINA_HOME}
 ADD tomcat /opt/app/tomcat
-RUN chmod +x ${CATALINA_HOME}/bin/*sh
+RUN chmod +x /opt/app/tomcat/bin/*.sh
 
 ADD dockerInit.sh /opt
 RUN chmod +x /opt/dockerInit.sh
