@@ -19,6 +19,6 @@ exports.config = {
     memoryMb: 1024,
     loadBalancerGroups:'testGroup',
     dockerCMD:'/opt/dockerInit.sh',
-    dockerImage:'vftomcat8/jdk8:1.0',
+    dockerImage:'vftomcat8-jdk8-1.0',
     dockerRegistryUri:'10.5.16.9:5000/'
 };
