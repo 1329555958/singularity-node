@@ -19,7 +19,7 @@ var config = require('./common/config').config;
 var assert = require('assert');
 var _ = require('lodash');
 
-var CONTROL_CMD = ['start', 'stop', 're', 'restart'];
+var CONTROL_CMD = ['start', 'stop', 're', 'restart', 'remove'];
 
 function processCmdParam() {
     var commandPrams = process.argv.splice(2);

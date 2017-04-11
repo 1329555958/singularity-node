@@ -63,8 +63,7 @@ function newRequestModel(params) {
  */
 function createRequest(params) {
     var model = newRequestModel(params);
-    //先删除，后重新发布
-    //$.delete(CONFIG.singularityUrl + '/api/requests/request/' + model.id, {json: {message: "redeploy"}}, function (err, resp, body) {
+
     $.post(CONFIG.singularityUrl + '/api/requests', {
         json: model
     }, function (err, resp, body) {
@@ -98,7 +97,7 @@ function createRequest(params) {
         }
         //DEPLOY.createDeploy(params);
     });
-    //});
+
 
 }
 /**
@@ -107,6 +106,13 @@ function createRequest(params) {
  * @param  cmd {string} re|restart start stop
  */
 function controlRequest(requestId, cmd) {
+    //删除
+    if ("remove" === cmd) {
+        $.delete(CONFIG.singularityUrl + '/api/requests/request/' + requestId, {json: {message: "redeploy"}}, function (err, resp, body) {
+            console.log("删除请求成功!" + requestId);
+        });
+        return;
+    }
     $.get(CONFIG.singularityUrl + '/api/requests/request/' + requestId, function (err, resp, body) {
         body = JSON.parse(body);
         if (err) {
@@ -147,10 +153,10 @@ function pause(requestId, callback) {
     postRequestId(requestId + '/pause', callback);
 }
 function bounce(requestId, callback) {
-    pause(requestId,function(){
-        setTimeout(function(){
+    pause(requestId, function () {
+        setTimeout(function () {
             unpause(requestId);
-        },10000);
+        }, 10000);
     });
 }
 
