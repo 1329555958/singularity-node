@@ -17,7 +17,7 @@ npm install
 # 发布单个应用
 ## 说明
 ### 必须参数
- INSTANCE_NAME ENV_INFO CONTEXT_NAME GIT_NAME INSTANCE_CMD(支持start/stop/restart)
+ INSTANCE_NAME ENV_INFO CONTEXT_NAME GIT_NAME INSTANCE_CMD(支持start/stop/restart|re/remove)
 ### 可选参数
  DOMAIN ，如果需要url访问，就需要指定域名
  DOCKER_IMAGE,可选vftomcat8-jdk8-1.0 | vftomcat7-jdk6-1.0 | vftomcat6-jdk6-1.0,默认使用的是vftomcat8-jdk8-1.0
