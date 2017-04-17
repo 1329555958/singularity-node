@@ -72,5 +72,5 @@ include /etc/nginx/conf.d/upstreams/func114fcw.vfinance.cn/*.conf;
 
 
 ## spring cloud eureka
-`"BEFORE_CMD=eval export eureka_instance_non-secure-port=$PORT eureka_instance_hostname=$TASK_HOST eureka_instance_ip-address=$TASK_HOST"`
+`BEFORE_CMD=eval export eureka_instance_nonSecurePort=\$PORT eureka_instance_hostname=\$TASK_HOST eureka_instance_ipAddress=\$TASK_HOST eureka_instance_instanceId=\$TASK_HOST:\$INSTANCE_NAME:\$PORT`
 用来解决服务注册发现的问题，注册时使用主机实际端口跟ip
