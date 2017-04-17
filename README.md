@@ -70,3 +70,7 @@ include /etc/nginx/conf.d/upstreams/func114fcw.vfinance.cn/*.conf;
 ## 负载均衡地址
   同一个应用在同一套环境中只能部署一次，因为相同的路径在一个只能出现一次，即使是在不同的域名下
 
+
+## spring cloud eureka
+`"BEFORE_CMD=eval export eureka.instance.non-secure-port=$PORT eureka.instance.hostname=$TASK_HOST eureka.instance.ip-address=$TASK_HOST"`
+用来解决服务注册发现的问题，注册时使用主机实际端口跟ip
