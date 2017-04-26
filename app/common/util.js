@@ -43,7 +43,7 @@ exports.commandLineParamsToJSON = function (params) {
     _.each(params, function (p) {
         var splitIndex = p.indexOf('=');
         if (splitIndex !== -1) {
-            obj[p.substring(0, splitIndex)] = p.substring(splitIndex + 1);
+            obj[p.substring(0, splitIndex)] = p.substring(splitIndex + 1).trim();
         }
     });
     return obj
