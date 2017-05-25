@@ -34,8 +34,11 @@ function defaultModel() {
         skipHealthchecksOnDeploy: false,
         "emailConfigurationOverrides": {
             "TASK_LOST": ["OWNERS", "ADMINS"],
-            "TASK_KILLED": ["OWNERS", "ADMINS"],
+            //"TASK_KILLED": ["OWNERS", "ADMINS"],
+            "TASK_SCHEDULED_OVERDUE_TO_FINISH": ["OWNERS", "ADMINS"],
             "TASK_FAILED": ["OWNERS", "ADMINS"],
+            "SINGULARITY_ABORTING": ["OWNERS", "ADMINS"],
+            "REQUEST_IN_COOLDOWN": ["OWNERS", "ADMINS"],
             "TASK_FAILED_DECOMISSIONED": ["OWNERS", "ADMINS"],
             "TASK_KILLED_UNHEALTHY": ["OWNERS", "ADMINS"]
         }
