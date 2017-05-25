@@ -129,7 +129,9 @@ function controlRequest(requestId, cmd) {
                 case 'start':
                 case 're':
                 case 'restart':
-                    unpause(requestId);
+                    unpause(requestId,function(){
+                        bounce(requestId);
+                    });
                     break;
             }
         } else {
@@ -156,11 +158,7 @@ function pause(requestId, callback) {
     postRequestId(requestId + '/pause', callback);
 }
 function bounce(requestId, callback) {
-    pause(requestId, function () {
-        setTimeout(function () {
-            unpause(requestId);
-        }, 10000);
-    });
+    postRequestId(requestId + '/bounce', callback);
 }
 
 /**
