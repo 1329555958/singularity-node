@@ -15,6 +15,7 @@ RUN yum -y update && \
         yum -y install unzip && \
         yum -y install git && \
         yum -y install lrzsz && \
+        yum -y install rsync && \
         yum -y install tar
 
 # Prepare environment
