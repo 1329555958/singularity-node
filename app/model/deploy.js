@@ -28,7 +28,7 @@ function defaultModel(params) {
         containerInfo: {
             type: "DOCKER",
             docker: {
-                image: UTIL.getDockerImageName(CONFIG.dockerRegistryUri, CONFIG.dockerImage+':'+CONFIG.dockerImageVersion),
+                image: UTIL.getDockerImageName(CONFIG.dockerRegistryUri, CONFIG.dockerImage),
                 privileged: true,
                 network: "BRIDGE",
                 portMappings: [
