@@ -100,7 +100,7 @@ function newDeployModel(params) {
             keys = keys.split(";");
             var numPorts = keys.length + 1;
             model.resources.numPorts = numPorts;
-            for (var i = 1; i < keys.numPorts; i++) {
+            for (var i = 1; i < numPorts; i++) {
                 var portMap = {
                     containerPortType: "LITERAL",
                     containerPort: 8080 + i,
@@ -127,6 +127,7 @@ function newDeployModel(params) {
 function createDeploy(params) {
     setTimeout(function () {
         var model = newDeployModel(params);
+        //console.log(JSON.stringify(model));
         $.post(CONFIG.singularityUrl + '/api/deploys', {
             json: model
         }, function (err, resp, body) {
