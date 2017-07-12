@@ -91,25 +91,18 @@ function newDeployModel(params) {
     }
     if (params.dockerImage) {
         _.set(model, 'containerInfo.docker.image', params.dockerImage);
-        //判断ttserver
-        if (params.dockerImage.indexOf("ttserver") != -1) {
-            var dockerInfo = model.containerInfo.docker;
-            // 获取所有的memcached实例名
-            var keys = model.env.GIT_NAME;
-            assert(keys, "使用ttserver时,请使用INSTANCE_CMD传递memcached的信息");
-            keys = keys.split(";");
-            var numPorts = keys.length + 1;
-            model.resources.numPorts = numPorts;
-            for (var i = 1; i < numPorts; i++) {
-                var portMap = {
-                    containerPortType: "LITERAL",
-                    containerPort: 8080 + i,
-                    hostPortType: "FROM_OFFER",
-                    hostPort: 0 + i,
-                    protocol: "tcp"
-                };
-                model.containerInfo.docker.portMappings.push(portMap);
-            }
+    }
+    if (model.resources.numPorts - 1 > 0) {
+        var numPorts = model.resources.numPorts - 0;
+        for (var i = 1; i < numPorts; i++) {
+            var portMap = {
+                containerPortType: "LITERAL",
+                containerPort: 8080 + i,
+                hostPortType: "FROM_OFFER",
+                hostPort: i,
+                protocol: "tcp"
+            };
+            model.containerInfo.docker.portMappings.push(portMap);
         }
     }
     assert(model.id, UTIL.formatString("id是必须的,params={}", params));
