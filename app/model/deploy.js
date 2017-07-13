@@ -16,6 +16,7 @@ var assert = require('assert');
 var $ = require('request');
 var CONFIG = require("../common/config").config;
 var UTIL = require('../common/util');
+var fs = require("fs");
 /**
  * 默认发布模型
  * @returns {{requestId: string, id: string, command: string, resources: {numPorts: number}, uris: Array, healthcheckUri: string, serviceBasePath: string, loadBalancerGroups: Array, healthcheckProtocol: string}}
@@ -91,7 +92,16 @@ function newDeployModel(params) {
     }
     if (params.dockerImage) {
         _.set(model, 'containerInfo.docker.image', params.dockerImage);
+        //如果是ttserver 就需要读取配置文件
+        if (params.dockerImage.indexOf('ttserver') > -1) {
+            var path = params.dockerEnv.GIT_NAME + "/" + params.dockerEnv.INSTANCE_CMD + ".txt";
+            var data = fs.readFileSync(path.replace(/\/\//g, "\/"));
+            var keystr = data.toString().replace(/\s+/g, ";").replace(/;+/g, ";").replace(/;$/, "").replace(/^;/, "");
+            model.env.KEY_STR = keystr;
+            model.resources.numPorts = keystr.split(";").length + 1;
+        }
     }
+
     if (model.resources.numPorts - 1 > 0) {
         var numPorts = model.resources.numPorts - 0;
         for (var i = 1; i < numPorts; i++) {
