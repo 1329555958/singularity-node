@@ -99,7 +99,27 @@ function newDeployModel(params) {
             var keystr = data.toString().replace(/\s+/g, ";").replace(/;+/g, ";").replace(/;$/, "").replace(/^;/, "");
             model.env.KEY_STR = keystr;
             model.resources.numPorts = keystr.split(";").length + 1;
+        } else if (params.dockerImage.indexOf('activemq') > -1) {
+            //activemq 映射8161  61616端口
+            var portMap = {
+                containerPortType: "LITERAL",
+                containerPort: 8161,
+                hostPortType: "LITERAL",
+                hostPort: 8161,
+                protocol: "tcp"
+            };
+            model.containerInfo.docker.portMappings.push(portMap);
+            portMap = {
+                containerPortType: "LITERAL",
+                containerPort: 61616,
+                hostPortType: "LITERAL",
+                hostPort: 61616,
+                protocol: "tcp"
+            };
+            model.containerInfo.docker.portMappings.push(portMap);
+
         }
+
     }
 
     if (model.resources.numPorts - 1 > 0) {
