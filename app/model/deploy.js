@@ -100,12 +100,16 @@ function newDeployModel(params) {
             model.env.KEY_STR = keystr;
             model.resources.numPorts = keystr.split(";").length + 1;
         } else if (params.dockerImage.indexOf('activemq') > -1) {
+            assert(params.activemqPorts, UTIL.formatString("activemq的端口需为2个,使用逗号分隔,activemqPorts={}", params.activemqPorts));
+            var activemqPorts = params.activemqPorts.split(',');
+            assert(activemqPorts.length == 2 && activemqPorts[0] - 31000 >= 0 && activemqPorts[0] - 32000 <= 0 && activemqPorts[1] - 31000 >= 0 && activemqPorts[1] - 32000 <= 0,
+                UTIL.formatString("activemq的端口需为2个,并且必须在[31000-32000]之间,activemqPorts={}", params.activemqPorts));
             //activemq 映射8161  61616端口
             var portMap = {
                 containerPortType: "LITERAL",
                 containerPort: 8161,
                 hostPortType: "LITERAL",
-                hostPort: 8161,
+                hostPort: activemqPorts[0],
                 protocol: "tcp"
             };
             model.containerInfo.docker.portMappings.push(portMap);
@@ -113,7 +117,7 @@ function newDeployModel(params) {
                 containerPortType: "LITERAL",
                 containerPort: 61616,
                 hostPortType: "LITERAL",
-                hostPort: 61616,
+                hostPort: activemqPorts[1],
                 protocol: "tcp"
             };
             model.containerInfo.docker.portMappings.push(portMap);
