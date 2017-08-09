@@ -48,6 +48,22 @@ DOCKER_IMAGE ttserver
 `node app/singularity.js "INSTANCE_NAME=ttserver" "ENV_INFO=func120" "CONTEXT_NAME=ttserver"  "GIT_NAME=index.com.netfinworks.antifraud;index.com.netfinworks.xxxx"  "INSTANCE_CMD=test" DOMAIN=func120intra.vfinance.cn "DOCKER_IMAGE=ttserver"`
 发布完之后 使用DOMAIN/INSTANCE_NAME 就可以访问ttserver了，就可以获取memcache地址了 
 
+# 发布activemq
+INSTANCE_NAME 自定义比如activemq
+ENV_INFO 
+CONTEXT_NAME 与INSTANCE_NAME相同
+GIT_NAME 自由指定
+INSTANCE_CMD 自由指定
+DOMAIN 域名(可不填)
+rackAffinity 对应节点的rack名
+DOCKER_IMAGE activemq
+activemqPorts 指定两个端口，都必须在[31000-32000]之间并且在主机上还未使用的端口，例如:31861,31616,第一个端口是http管理端口，第二个是数据端口
+
+## 示例
+`node app/singularity.js "INSTANCE_NAME=activemq" "ENV_INFO=func125" "CONTEXT_NAME=activemq"  "GIT_NAME=activemq"  "INSTANCE_CMD=test" "DOCKER_IMAGE=activemq" "rackAffinity=dev21514" "activemqPorts=31861,31616"`
+就可以访问 10.65.215.14:31861了
+
+
 # 注意事项
 ## 添加域名解析
 ```
