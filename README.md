@@ -55,7 +55,7 @@ CONTEXT_NAME 与INSTANCE_NAME相同
 GIT_NAME 自由指定
 INSTANCE_CMD 自由指定
 DOMAIN 域名(可不填)
-rackAffinity 对应节点的rack名
+rackAffinity 对应节点的rack名(用来指定具体主机)
 DOCKER_IMAGE activemq
 activemqPorts 指定两个端口，都必须在[31000-32000]之间并且在主机上还未使用的端口，例如:31861,31616,第一个端口是http管理端口，第二个是数据端口
 
