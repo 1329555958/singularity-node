@@ -76,7 +76,11 @@ function createRequest(params) {
         console.log(UTIL.formatString("创建请求成功,准备发布！参数={},结果={}", model, body));
         if (body.state === "PAUSED") {
             //先取消pause
-            unpause(body.id, function (err, resp, body) {
+            unpause(body.request.id, function (err, resp, body) {
+                if(err){
+                    console.log('发布失败:',err,body);
+                    return;
+                }
                 setTimeout(function () {
                     createRequest(params);
                 }, 2000);
