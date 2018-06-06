@@ -76,6 +76,7 @@ function newDeployModel(params) {
     var id = params.buildId || UTIL.dateUtil.format(now, 'hh.mm.ss');
     model.requestId = model.id;
     model.id = id;
+    model.containerInfo.docker.parameters['hostname'] = model.requestId;
     if (!_.isArray(model.uris)) {
         model.uris = model.uris.split(',');
     }
