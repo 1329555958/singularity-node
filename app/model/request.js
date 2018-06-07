@@ -115,9 +115,7 @@ function createRequest(params) {
 function controlRequest(requestId, cmd) {
     //删除
     if ("remove" === cmd) {
-        $.delete(CONFIG.singularityUrl + '/api/requests/request/' + requestId, {json: {message: "redeploy"}}, function (err, resp, body) {
-            console.log("删除请求成功!" + requestId);
-        });
+        deleteRequest(requestId);
         return;
     }
     $.get(CONFIG.singularityUrl + '/api/requests/request/' + requestId, function (err, resp, body) {
@@ -155,6 +153,13 @@ function controlRequest(requestId, cmd) {
     });
 }
 
+function deleteRequest(requestId,callback){
+    $.delete(CONFIG.singularityUrl + '/api/requests/request/' + requestId, {json: {message: "redeploy"}}, function (err, resp, body) {
+        console.log("删除请求成功!" + requestId);
+        callback && callback();
+    });
+}
+
 function unpause(requestId, callback) {
     postRequestId(requestId + '/unpause', callback);
 }
@@ -184,3 +189,4 @@ function postRequestId(uri, callback) {
 
 exports.createRequest = createRequest;
 exports.controlRequest = controlRequest;
+exports.deleteRequest = deleteRequest;

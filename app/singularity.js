@@ -109,8 +109,9 @@ function singularity(params) {
     UTIL.moveProperties(params, 'resources', ['cpus', 'memoryMb', 'numPorts']);
 
     console.log('json params:', params);
-
-    SRequest.createRequest(params);
+    SRequest.deleteRequest(params.id,function(){
+        SRequest.createRequest(params);
+    });
 }
 
 exports.singularity = singularity;
