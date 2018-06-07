@@ -156,7 +156,9 @@ function controlRequest(requestId, cmd) {
 function deleteRequest(requestId,callback){
     $.delete(CONFIG.singularityUrl + '/api/requests/request/' + requestId, {json: {message: "redeploy"}}, function (err, resp, body) {
         console.log("删除请求成功!" + requestId);
-        callback && callback();
+        if(callback){
+            setTimeout(callback,30000);
+        }
     });
 }
 
