@@ -1,6 +1,8 @@
 #!/bin/bash
+ln -s /usr/local/tokyocabinet/lib/libtokyocabinet.so.9 libtokyocabinet.so.9
 /usr/local/tokyotyrant/bin/ttserver -port <%=ttserverPort%>  -dmn -log $MESOS_SANDBOX/ttserver.log -pid /root/ttserver.pid /root/ttserver_db/index.tch
 url=http://127.0.0.1:<%=ttserverPort%>
+echo "ttserver listens on <%=ttserverPort%>"
 # _health_check
 curl -X PUT $url/$CONTEXT_NAME/_health_check -d "ok"
 # start memecached
@@ -9,4 +11,3 @@ echo <%=keyPort.key+':'+keyPort.port%>
 memcached -d -u root -m 10 -p <%=keyPort.port%> -c 10240
 curl -X PUT $url/$CONTEXT_NAME/<%=keyPort.key%> -d "$TASK_HOST:<%=keyPort.port%>"
 <%});%>
-tail -f $MESOS_SANDBOX/ttserver.log

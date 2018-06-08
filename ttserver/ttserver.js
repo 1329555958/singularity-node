@@ -82,13 +82,7 @@ function assignPorts(availablePorts) {
 
 function saveRunShell() {
     var shell = compileRunShell({ttserverPort: TtserverPort, mcKeyPorts: McKeyPorts});
-    console.log(shell);
     fs.writeFileSync(RunShellFile, shell);
-    var cmd = 'sh ' + RunShellFile;
-    console.log(cmd);
-    Exec(cmd, function (err, stdout, stderr) {
-        err && console.log(err);
-    });
 }
 
 loadConf();
@@ -96,5 +90,7 @@ findAvailablePorts(function (ports) {
     assignPorts(ports);
     saveRunShell();
     saveConf();
-    console.log('finished');
+    console.log('inited');
 });
+
+//docker run -e MESOS_SANDBOX=/mnt/mesos/sandbox -e ENV_INFO=func124 -e INSTANCE_NAME=ttserver -e KEY_STR="index.com.netfinworks.cache.cc;index.com.netfinworks.ma.cache;index.com.netfinworks.dpm;index.com.netfinworks.cmf.channelintegration" --net host -it ttserver bash
