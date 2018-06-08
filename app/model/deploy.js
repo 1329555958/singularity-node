@@ -99,8 +99,14 @@ function newDeployModel(params) {
             var path = params.dockerEnv.GIT_NAME + "/" + params.dockerEnv.INSTANCE_CMD + ".txt";
             var data = fs.readFileSync(path.replace(/\/\//g, "\/"));
             var keystr = data.toString().replace(/\s+/g, ";").replace(/;+/g, ";").replace(/;$/, "").replace(/^;/, "");
+            // ttserver use host mode network
+            delete model.containerInfo.docker.parameters['hostname'];
+            // remove load balance and health check
+            model.containerInfo.docker.network = 'host';
+            delete model.containerInfo.docker.portMappings;
+            model.containerInfo.docker.parameters.volume='/opt/mesos/ttserver:/ttserver';
+
             model.env.KEY_STR = keystr;
-            model.resources.numPorts = keystr.split(";").length + 1;
         } else if (params.dockerImage.indexOf('activemq') > -1) {
             assert(params.activemqPorts, UTIL.formatString("activemq的端口需为2个,使用逗号分隔,activemqPorts={}", params.activemqPorts));
             var activemqPorts = params.activemqPorts.split(',');
