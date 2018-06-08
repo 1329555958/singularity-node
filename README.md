@@ -39,13 +39,15 @@ npm install
 INSTANCE_NAME 自定义比如ttserver
 ENV_INFO 
 CONTEXT_NAME 与INSTANCE_NAME相同
-GIT_NAME 用来指定memcached的标识，用;分隔
-INSTANCE_CMD 自由指定
+GIT_NAME 配置文件目录
+INSTANCE_CMD 配置文件名称
 DOMAIN 域名
 DOCKER_IMAGE ttserver
+rackAffinity 对应节点的rack名(用来指定具体主机)
+
 
 ## 示例
-`node app/singularity.js "INSTANCE_NAME=ttserver" "ENV_INFO=func120" "CONTEXT_NAME=ttserver"  "GIT_NAME=index.com.netfinworks.antifraud;index.com.netfinworks.xxxx"  "INSTANCE_CMD=test" DOMAIN=func120intra.vfinance.cn "DOCKER_IMAGE=ttserver"`
+`node app/singularity.js "rackAffinity=dev21514" "INSTANCE_NAME=ttserver" "ENV_INFO=func120" "CONTEXT_NAME=ttserver"  "GIT_NAME=/opt/scm_tools"  "INSTANCE_CMD=base" DOMAIN=func120intra.vfinance.cn "DOCKER_IMAGE=ttserver"`
 发布完之后 使用DOMAIN/INSTANCE_NAME 就可以访问ttserver了，就可以获取memcache地址了 
 
 # 发布activemq
