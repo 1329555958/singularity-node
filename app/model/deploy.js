@@ -105,6 +105,7 @@ function newDeployModel(params) {
             model.containerInfo.docker.network = 'host';
             delete model.containerInfo.docker.portMappings;
             model.containerInfo.docker.parameters.volume='/opt/mesos/ttserver:/ttserver';
+            model.skipHealthchecksOnDeploy = true;
 
             model.env.KEY_STR = keystr;
         } else if (params.dockerImage.indexOf('activemq') > -1) {

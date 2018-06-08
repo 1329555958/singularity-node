@@ -100,6 +100,10 @@ function singularity(params) {
 
     if (params.DOCKER_IMAGE) {
         params.dockerImage = UTIL.getDockerImageName(config.dockerRegistryUri, params.DOCKER_IMAGE);
+        //remove loadBalance for ttserver
+        if(params.DOCKER_IMAGE.indexOf('ttserver') !== -1){
+            params.loadBalanced = false;
+        }
     }
 
     params.command = params.command || config.dockerCMD;
