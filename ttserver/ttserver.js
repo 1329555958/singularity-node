@@ -93,4 +93,4 @@ findAvailablePorts(function (ports) {
     console.log('inited');
 });
 
-//docker run -e MESOS_SANDBOX=/mnt/mesos/sandbox -e ENV_INFO=func124 -e INSTANCE_NAME=ttserver -e KEY_STR="index.com.netfinworks.cache.cc;index.com.netfinworks.ma.cache;index.com.netfinworks.dpm;index.com.netfinworks.cmf.channelintegration" --net host -it ttserver bash
+//docker run -e TASK_HOST=10.65.215.14 -e MESOS_SANDBOX=/mnt/mesos/sandbox -e ENV_INFO=func124 -e INSTANCE_NAME=ttserver -e KEY_STR="index.com.netfinworks.cache.cc;index.com.netfinworks.ma.cache;index.com.netfinworks.dpm;index.com.netfinworks.cmf.channelintegration" --net host -it ttserver bash
