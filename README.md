@@ -60,6 +60,7 @@ DOMAIN 域名(可不填)
 rackAffinity 对应节点的rack名(用来指定具体主机)
 DOCKER_IMAGE activemq
 activemqPorts 指定两个端口，都必须在[31000-32000]之间并且在主机上还未使用的端口，例如:31861,31616,第一个端口是http管理端口，第二个是数据端口
+`docker run --net host -i 10.5.16.9:5000/ports ports` 可以查看当前可用的端口
 
 ## 示例
 `node app/singularity.js "INSTANCE_NAME=activemq" "ENV_INFO=func125" "CONTEXT_NAME=activemq"  "GIT_NAME=activemq"  "INSTANCE_CMD=test" "DOCKER_IMAGE=activemq" "rackAffinity=dev21514" "activemqPorts=31861,31616"`
