@@ -130,7 +130,7 @@ function newDeployModel(params) {
                 protocol: "tcp"
             };
             model.containerInfo.docker.portMappings.push(portMap);
-
+            model.skipHealthchecksOnDeploy = true;
         }
 
     }

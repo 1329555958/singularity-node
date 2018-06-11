@@ -100,8 +100,8 @@ function singularity(params) {
 
     if (params.DOCKER_IMAGE) {
         params.dockerImage = UTIL.getDockerImageName(config.dockerRegistryUri, params.DOCKER_IMAGE);
-        //remove loadBalance for ttserver
-        if(params.DOCKER_IMAGE.indexOf('ttserver') !== -1){
+        //remove loadBalance for ttserver and activemq
+        if(params.DOCKER_IMAGE.indexOf('ttserver') !== -1 || params.DOCKER_IMAGE.indexOf('activemq') !== -1){
             params.loadBalanced = false;
         }
     }
